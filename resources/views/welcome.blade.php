@@ -3,12 +3,34 @@
 @section('content')
 
     @include('components.hero', [
-        'title' => 'Veniam consectetur sit incididunt labore.',
-        'description' => 'Ut elit dolor velit reprehenderit ipsum nulla nostrud fugiat id id deserunt adipisicing aliquip. Deserunt nulla laboris culpa ipsum commodo veniam sint laboris excepteur dolor ea magna id amet.',
+        'title' => 'Recupera tu vida del <span>dolor crónico</span>',
+        'description' => 'Tratamientos avanzados y no invasivos diseñados para ayudarle a vivir sin dolor. Experimente el futuro de la medicina regenerativa con nuestro enfoque centrado en la empatía.',
         'button' => [
             'url' => '#',
-            'title' => 'See More'
+            'title' => 'Agendar Consulta'
         ],
+        'button_secondary' => [
+            'url' => '#',
+            'title' => 'Leer Más'
+        ],
+        'cards' => [
+            'title' => 'Más de 500 pacientes satisfechos',
+            'subtitle' => 'Calificación: 4,9/5 estrellas',
+            'items' => [
+                [
+                    'url' => asset('/images/cards/user-1.png'),
+                    'alt' => 'User 1',
+                ],
+                [
+                    'url' => asset('/images/cards/user-2.png'),
+                    'alt' => 'User 2',
+                ],
+                [
+                    'url' => asset('/images/cards/user-3.png'),
+                    'alt' => 'User 3',
+                ],
+            ]
+        ]
     ])
 
 

@@ -2,23 +2,31 @@
 
 .hero {
   position: relative;
-  min-height: calc(100vh - 80px);
+  height: calc(100vh - 80px);
+  max-height: 700px;
   display: flex;
   align-items: center;
   justify-content: center;
   &__picture {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+    width: 550px;
+    height: 400px;
     display: flex;
     z-index: 1;
+    overflow: hidden;
+    border-radius: 25px;
+    position: relative;
+  }
+  &__container {
+    display: flex;
+    align-items: center;
+    gap: 120px;
+    align-items: center;
   }
   &__image {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: top;
   }
   &__overlay {
     position: absolute;
@@ -27,25 +35,79 @@
     width: 100%;
     height: 100%;
     z-index: 2;
-    background: linear-gradient(rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.6) 100%);
+    background: linear-gradient(rgba(0, 0, 0, 0.1) 50%, rgb(17 33 23 / 0.8) 100%);
   }
   &__content {
+    flex: 1;
     position: relative;
     z-index: 3;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
     gap: 10px;
     max-width: 990px;
     width: 100%;
   }
   &__description {
     max-width: 550px;
-    color: $white;
+    color: $text;
     line-height: 2rem;
+    text-align: left;
   }
   &__title {
-    color: $white;
+    color: $text;
+    text-align: left;
+    text-transform: uppercase;
+    span {
+      color: $primary;
+    }
+  }
+  &__buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+  }
+  &__card {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 20px 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 3;
+    width: 500px;
+    max-width: 90%;
+    &--images {
+      display: flex;
+      align-items: center;
+      img {
+        width: 40px;
+        height: 4 0px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid $white;
+        &:not(:first-child) {
+          margin-left: -15px;
+        }
+      }
+    }
+    &--text {
+      font-weight: 600;
+      color: $text;
+      margin: 0;
+      line-height: 1.2;
+    }
+    &--subtext {
+      font-weight: 300;
+      color: $text;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.4;
+    }
   }
 }
