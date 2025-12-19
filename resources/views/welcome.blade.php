@@ -4,14 +4,14 @@
 
     @include('components.hero', [
         'title' => 'Recupera tu vida del <span>dolor crónico</span>',
-        'description' => 'Tratamientos avanzados y no invasivos diseñados para ayudarle a vivir sin dolor. Experimente el futuro de la medicina regenerativa con nuestro enfoque centrado en la empatía.',
+        'description' => 'Clínica del Dolor Apure esta disenada para atender pacientes con síndromes dolorosos, única en el Estado Apure. Contamos con un equipo de expertos médicos altamente capacitados, instalaciones modernas y un compromiso inquebrantable con el bienestar de nuestros pacientes.',
         'button' => [
             'url' => '#',
             'title' => 'Agendar Consulta'
         ],
         'button_secondary' => [
             'url' => '#',
-            'title' => 'Leer Más'
+            'title' => 'Más información'
         ],
         'cards' => [
             'title' => 'Más de 500 pacientes satisfechos',
@@ -54,6 +54,27 @@
             ]
         ]
     ])
+
+    @include('components.section-about', [
+        'pretitle' => 'Acerca de Nuestra Clínica',
+        'title' => 'Sanación con empatía y tecnología avanzada',
+        'description' => '<p>La Clínica del Dolor Apure se establece como un centro especializado en el diagnóstico y tratamiento del dolor, con un enfoque multidisciplinario que busca mejorar la calidad de vida de los pacientes. Integrando diversas especialidades para ofrecer un tratamiento integral, atendiendo especialmente aquellos pacientes con patologías agudas y crónicas, oncológicas y no oncológicas. Su objetivo es ofrecer un manejo integral del dolor, combinando recursos médicos y terapéuticos para facilitar la recuperación y reintegración laboral de los pacientes.</p><p>Esta clínica es esencial para mejorar la calidad de vida de los pacientes, considerando aspectos médicos, psicológicos y sociales, garantizando un acceso efectivo a tratamientos especializados.</p><p>El manejo efectivo del dolor requiere la integración de diversas especialidades médicas. La clínica enfatiza la importancia de:
+            <ul>
+                <li>Un diagnóstico adecuado que permita un tratamiento efectivo.</li>
+                <li>La prevención de complicaciones asociadas al dolor crónico.</li>
+                <li>La evaluación continua de la calidad de vida del paciente.</li>
+            </ul></p>
+        <p>En resumen, la Clínica del Dolor Apure es fundamental para abordar el complejo fenómeno del dolor crónico, proporcionando un enfoque integral y multidisciplinario que busca mejorar tanto la salud física como la calidad de vida de los pacientes.</p>',
+        'image' => [
+            'url' => asset('/images/About-medicine.webp'),
+            'alt' => 'About our clinic'
+        ],
+        'button' => [
+            'url' => '#',
+            'title' => 'Conoce al Equipo'
+        ]
+    ])
+
     @include('components.section-booking', [
         'title' => 'Book Your Move Online',
         'description' => 'Get a free quote in just a few simple steps.',

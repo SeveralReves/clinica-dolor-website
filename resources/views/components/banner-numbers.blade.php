@@ -6,7 +6,7 @@
                 <span class="banner__numbers--label">{{ $number['label'] }}</span>
             </div>
             @if(!$loop->last)
-                <div class="banner__number--divider"></div>
+                <div class="banner__numbers--divider"></div>
             @endif
         @endforeach
     </div>

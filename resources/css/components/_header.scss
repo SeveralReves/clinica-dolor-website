@@ -17,7 +17,7 @@
   transition: all 500ms ease-in-out;
   &.headroom--not-top{
     @media (min-width: 1025px) {
-      pointer-events: none;
+      // pointer-events: none;
       .header__nav{
         pointer-events: all;
       }

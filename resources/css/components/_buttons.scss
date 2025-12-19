@@ -2,6 +2,8 @@
 
 .button{
   &__primary {
+    display: flex;
+    width: fit-content;
     padding: 16px 32px;
     font-weight: 700;
     font-family: 'Montserrat', sans-serif;
@@ -22,6 +24,8 @@
     }
   }
   &__secondary {
+    display: flex;
+    width: fit-content;
     padding: 16px 32px;
     font-weight: 700;
     font-family: 'Montserrat', sans-serif;
@@ -39,6 +43,8 @@
     }
   }
   &__ghost {
+    display: flex;
+    width: fit-content;
     padding: 16px 32px;
     border-radius: 10px;
     font-weight: 700;
