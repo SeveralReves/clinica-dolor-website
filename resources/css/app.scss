@@ -11,6 +11,8 @@
 @use 'components/booking' as *;
 @use 'components/error' as *;
 
+@import "boxicons/css/boxicons.min.css";
+
 /* Añade espacio entre slides */
 .slick-slide {
   margin: 0 15px;

@@ -75,6 +75,43 @@
         ]
     ])
 
+    @include('components.section-services', [
+        'title' => 'Nuestros Servicios',
+        'description' => 'Ofrecemos una amplia gama de servicios especializados para el manejo del dolor crónico.',
+        'services' => [
+            [
+                'title' => 'Consultas Medicas Especializadas',
+                'description' => 'Evaluaciones exhaustivas para identificar la causa del dolor y desarrollar un plan de tratamiento personalizado.',
+                'icon' => 'bx-user-check',
+            ],
+            [
+                'title' => 'Procedimientos quirúrgicos e Intervencionistas',
+                'description' => 'Técnicas mínimamente invasivas para aliviar el dolor, incluyendo bloqueos nerviosos y terapias de radiofrecuencia.',
+                'icon' => 'bx-plus-medical',
+            ],
+            [
+                'title' => 'Rehability Medical',
+                'description' => 'Rehabilitación y ejercicios personalizados para restaurar la movilidad y fuerza.',
+                'icon' => 'bx-body',
+            ],
+            [
+                'title' => 'Gym Medical',
+                'description' => 'Programas de ejercicio supervisados para mejorar la condición física y reducir el dolor.',
+                'icon' => 'bx-dumbbell',
+            ],
+            [
+                'title' => 'Spa Medical',
+                'description' => 'Terapias de relajación y bienestar para complementar el tratamiento del dolor.',
+                'icon' => 'bx-spa',
+            ],
+            [
+                'title' => 'Educacion',
+                'description' => 'Programas educativos para informar sobre el manejo del dolor.',
+                'icon' => 'bx-book'
+            ]
+        ]
+    ])
+
     @include('components.section-booking', [
         'title' => 'Book Your Move Online',
         'description' => 'Get a free quote in just a few simple steps.',
