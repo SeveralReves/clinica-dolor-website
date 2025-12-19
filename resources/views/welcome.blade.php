@@ -34,6 +34,26 @@
     ])
 
 
+    @include('components.banner-numbers', [
+        'numbers' => [
+            [
+                'value' => '15+',
+                'label' => 'Años de Experiencia'
+            ],
+            [
+                'value' => '500',
+                'label' => 'Pacientes Satisfechos'
+            ],
+            [
+                'value' => '4.9',
+                'label' => 'Calificación Promedio'
+            ],
+            [
+                'value' => '24/7',
+                'label' => 'Soporte al Paciente'
+            ]
+        ]
+    ])
     @include('components.section-booking', [
         'title' => 'Book Your Move Online',
         'description' => 'Get a free quote in just a few simple steps.',
@@ -45,37 +65,44 @@
     ])
 
     @include('components.section-faq', [
-        'title' => 'Frequently Asked Questions',
-        'description' => "Have questions? We've got answers.",
+        'title' => 'Preguntas frecuentes',
+        'description' => "¿Tienes preguntas? Tenemos respuestas.",
         'cta' => [
-            'text' => 'Contact Us',
+            'text' => 'Contáctanos para más información',
             'url'  => '#booking'
         ],
         'faqs' => [
             [
-            'q' => 'How is the price for my move determined?',
-            'a' => 'Our pricing is based on an hourly rate which includes the truck, equipment and moving crew. We give you a detailed quote upfront with no hidden fees.'
+            'q' => '¿Aceptan mi seguro?',
+            'a' => 'Aceptamos la mayoría de los planes de seguro principales. Comuníquese con nuestra oficina con los detalles específicos de su póliza para verificarla.'
             ],
             [
-            'q' => 'How far in advance should I schedule my move?',
-            'a' => 'We recommend 2–4 weeks in advance to secure your preferred date. For peak season, book earlier.'
+            'q' => '¿Qué debo esperar en mi primera visita?',
+            'a' => 'Su primera visita incluirá una evaluación completa, una revisión de su historial médico y, posiblemente, algunas pruebas diagnósticas. Nuestro objetivo es comprender la causa de su dolor.',
             ],
             [
-            'q' => 'What is included in your standard moving service?',
-            'a' => 'Truck, crew, loading/unloading, basic protection blankets, and standard furniture assembly/disassembly.'
+            'q' => '¿Son dolorosos los tratamientos?',
+            'a' => 'La mayoría de nuestros tratamientos son mínimamente invasivos y están diseñados para ser lo más cómodos posible. Ofrecemos diversas opciones de sedación y anestesia para garantizar su comodidad.'
             ],
             [
-            'q' => 'What kind of insurance coverage do you offer?',
-            'a' => 'Basic valuation is included. Full-value protection is available upon request.'
+            'q' => '¿Necesito una referencia?',
+            'a' => 'Esto depende de tu plan de seguro específico. Los planes PPO generalmente no requieren referencia, mientras que los planes HMO sí.'
             ],
             [
-            'q' => 'What is your policy on rescheduling or cancellation?',
-            'a' => 'You can reschedule up to 48 hours before the job without fees. See full policy in your quote.'
+            'q' => '¿Qué es su política sobre reprogramación o cancelación?',
+            'a' => 'Puede reprogramar hasta 24 horas antes de la cita sin tarifas. Las cancelaciones tardías pueden estar sujetas a una tarifa.'
             ],
         ]
     ])
 
-
+    @include('components.banner-simple', [
+        'title' => '¿Listo para vivir sin dolor?',
+        'description' => 'Agenda tu consulta hoy y da el primer paso hacia una vida más saludable y feliz.',
+        'button' => [
+            'url' => '#booking',
+            'title' => 'Agendar Consulta'
+        ]
+    ])
 
 
 {{-- <div class="container">

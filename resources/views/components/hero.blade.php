@@ -29,7 +29,7 @@
           </div>
         @endif
     </div>
-    <div class="hero__picture">
+    <div class="hero__picture"  data-aos="fade-up" data-aos-duration="1500">
       <div class="hero__overlay"></div>
       <div class="hero__card">
         <div class="hero__card--images">

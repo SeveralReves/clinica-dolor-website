@@ -3,7 +3,6 @@
 .button{
   &__primary {
     padding: 16px 32px;
-    border-radius: 10px;
     font-weight: 700;
     font-family: 'Montserrat', sans-serif;
     background-color: $primary;
@@ -12,7 +11,7 @@
     border-radius: 9999px;
     transition: all 350ms ease-in-out;
     @include hover {
-      background-color: $secondary;
+      background-color: #2b5eb0;
     }
     @media (max-width: 1025px) {
       font-size: 12px;
@@ -23,16 +22,17 @@
     }
   }
   &__secondary {
-    padding: 8px 16px;
-    border-radius: 10px;
+    padding: 16px 32px;
     font-weight: 700;
     font-family: 'Montserrat', sans-serif;
     background-color: $secondary;
-    color: $white;
+    color: $black;
     font-size: 16px;
+    border-radius: 9999px;
     transition: all 350ms ease-in-out;
     @include hover {
-      background-color: $primary;
+      background-color: #36df90;
+      box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), 0 0 20px rgba(48, 232, 122, 0.4);
     }
     @media (max-width: 1025px) {
       font-size: 12px;

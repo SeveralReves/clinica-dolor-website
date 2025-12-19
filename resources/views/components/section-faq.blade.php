@@ -40,7 +40,7 @@
 
     @if (!empty($cta['url'] ?? null))
       <div class="section__faq--cta">
-        <p class="section__faq--cta-text">Still have questions?</p>
+        {{-- <p class="section__faq--cta-text">Still have questions?</p> --}}
         <a class="button__primary" href="{{ $cta['url'] }}" title="{{ $cta['text'] ?? 'Contact us' }}">
           {{ $cta['text'] ?? 'Contact us' }}
         </a>

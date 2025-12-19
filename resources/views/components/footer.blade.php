@@ -69,7 +69,7 @@
     </div>
 
     <div class="footer__bottom">
-      <p>© {{ date('Y') }} Golden Street Moving Company. All rights reserved.</p>
+      <p>© {{ date('Y') }} {{ env('APP_NAME') }}. Todos los derechos reservados.</p>
       <p>Developed by <a href="https://severalreves.lat" target="_blank">Severalreves</a></p>
     </div>
   </div>
