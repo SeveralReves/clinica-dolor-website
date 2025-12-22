@@ -6,7 +6,7 @@
         'title' => 'Recupera tu vida del <span>dolor crónico</span>',
         'description' => 'Clínica del Dolor Apure esta disenada para atender pacientes con síndromes dolorosos, única en el Estado Apure. Contamos con un equipo de expertos médicos altamente capacitados, instalaciones modernas y un compromiso inquebrantable con el bienestar de nuestros pacientes.',
         'button' => [
-            'url' => '#',
+            'url' => '/agendar',
             'title' => 'Agendar Consulta'
         ],
         'button_secondary' => [
@@ -117,6 +117,7 @@
         'description' => 'Un equipo dedicado de profesionales comprometidos con tu bienestar.',
         'specialists' => [
             [
+                'id' => 1,
                 'name' => 'Dra. CARMEN CARRILLO',
                 'role' => 'Medicina del Dolor - Anestesiólogo',
                 'description' => 'Con más de una década de experiencia, la Dra. Carrillo es la especialista experta en Medicina del Dolor.',
@@ -126,6 +127,7 @@
                 ]
             ],
             [
+                'id' => 2,
                 'name' => 'Dr. MARIA GUILLEN',
                 'role' => 'Anestesiólogo',
                 'description' => 'Como médico en jefe de Clínica del Dolor Apure, la Dra. Guillen se especializa en Anestesiología.',
@@ -135,6 +137,7 @@
                 ]
             ],
             [
+                'id' => 3,
                 'name' => 'Dra. Natalia Ramos',
                 'role' => 'Medicina fisica y Rehabilitacion',
                 'description' => 'La Dra. Ramos cuenta con más de 15 años de experiencia en las áreas de fertilidad y obstetricia.',
@@ -144,6 +147,7 @@
                 ]
             ],
             [
+                'id' => 4,
                 'name' => 'Dr. Juan Pérez',
                 'role' => 'Especialista en Manejo del Dolor',
                 'description' => 'Con más de 15 años de experiencia en el tratamiento del dolor crónico, el Dr. Pérez lidera nuestro equipo con un enfoque centrado en el paciente.',
@@ -153,6 +157,7 @@
                 ]
             ],
             [
+                'id' => 5,
                 'name' => 'Dra. María Gómez',
                 'role' => 'Fisioterapeuta',
                 'description' => 'Especialista en rehabilitación y fisioterapia para el manejo del dolor.',
@@ -162,6 +167,7 @@
                 ]
             ],
             [
+                'id' => 6,
                 'name' => 'Dr. Carlos Rodríguez',
                 'role' => 'Anestesiólogo',
                 'description' => 'Experto en técnicas de anestesia y procedimientos intervencionistas para el alivio del dolor.',
@@ -218,7 +224,7 @@
         'title' => '¿Listo para vivir sin dolor?',
         'description' => 'Agenda tu consulta hoy y da el primer paso hacia una vida más saludable y feliz.',
         'button' => [
-            'url' => '#booking',
+            'url' => '/agendar',
             'title' => 'Agendar Consulta'
         ]
     ])

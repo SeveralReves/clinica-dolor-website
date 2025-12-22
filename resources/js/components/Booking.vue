@@ -8,6 +8,7 @@ import Multiselect from '@vueform/multiselect'
 import '@vueform/multiselect/themes/default.css'
 import axios from 'axios'
 import Swal from 'sweetalert2' 
+import { onMounted } from 'vue'
 
 // Props
 const props = defineProps({
@@ -35,6 +36,19 @@ const todayStart = computed(() => {
   d.setHours(0, 0, 0, 0)
   return d
 })
+
+const specialist_id = ref(null);
+
+onMounted(() => {
+  const params = new URLSearchParams(window.location.search)
+  const specialistQuery = params.get('specialist')
+  if (!specialistQuery) return
+
+  const id = Number(specialistQuery)
+  const spec = props.specialists.find(s => Number(s.id) === id)
+  if (spec) changeSpecialist(spec)
+})
+
 
 // Validation schema
 const schema = Yup.object({

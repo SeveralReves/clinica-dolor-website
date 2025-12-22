@@ -14,7 +14,7 @@
           <p class="section__specialists--item-role">{{ $specialist['role'] }}</p>
           <p class="section__specialists--item-description">{{ $specialist['description'] }}</p>
           <div class="section__specialists--item-button">
-            <a href="#" class="button__primary button__primary--small">Agendar</a>
+            <a href="/agendar?specialist={{ $specialist['id'] }}" class="button__primary button__primary--small">Agendar</a>
           </div>
         </div>
       @endforeach

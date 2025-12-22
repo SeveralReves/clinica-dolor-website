@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Artisan;
 Route::get('/legals', function () {
     return view('legal');
 });
+Route::get('/agendar/gracias/{id}', function ($id) {
+    return view('schedule-thanks', ['id' => $id]);
+});
 Route::get('/agendar', function () {
     return view('schedule');
 });
