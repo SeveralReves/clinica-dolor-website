@@ -16,12 +16,11 @@
         </div>
         <nav class="footer__nav">
           <ul>
-            <li><a href="/#services">Services</a></li>
-            <li><a href="/#about">About Us</a></li>
-            <li><a href="/#testimonials">Reviews</a></li>
-            <li><a href="/#booking">Contact</a></li>
-            <li><a href="/legals">Terms &amp; Conditions</a></li>
-            <li><a href="/legals">Privacy Policy</a></li>
+            <li><a href="/#home">Inicio</a></li>
+            <li><a href="/#about">Acerca de</a></li>
+            <li><a href="/#services">Servicios</a></li>
+            <li><a href="/#doctors">Doctores</a></li>
+            <li><a href="/#faq">Preguntas Frecuentes</a></li>
           </ul>
         </nav>
       </div>

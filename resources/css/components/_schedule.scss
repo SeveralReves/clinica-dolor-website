@@ -1,0 +1,32 @@
+@use '../base' as *;
+
+ .schedule {
+    //  background-color: $color-light-blue;
+    margin-top: 100px;
+    padding: 40px 0;
+
+    &__title {
+      //  color: $color-dark-blue;
+      margin-bottom: 12px;
+      span {
+        color: $secondary;
+      }
+    }
+
+    &__subtitle {
+      //  color: $color-dark-blue;
+        margin-bottom: 32px;
+        color: $text;
+        max-width: 600px;
+    }
+
+    &__button {
+      //  background-color: $color-primary;
+        color: #fff;
+        text-decoration: none;
+
+        &:hover {
+          //  background-color: darken($color-primary, 10%);
+        }
+    }
+}

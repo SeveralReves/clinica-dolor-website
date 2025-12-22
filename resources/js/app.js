@@ -22,9 +22,9 @@ window.$ = $;
 window.jQuery = $;
 
 // vue
-import { initGoogle } from './lib/google';
+// import { initGoogle } from './lib/google';
 
-initGoogle(import.meta.env.VITE_GOOGLE_MAPS_API_KEY); //
+// initGoogle(import.meta.env.VITE_GOOGLE_MAPS_API_KEY); //
 
 import { createApp } from 'vue'
 
@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     easing: 'ease', 
     once: true, 
   });
+  
   // Busca todos los nodos Blade que pidan un componente Vue
   document.querySelectorAll('[data-vue]').forEach(async (el) => {
     const name = el.getAttribute('data-vue')
@@ -73,59 +74,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const app = createApp(Comp, props)
     app.mount(el)
   })
-   document.querySelectorAll('.section__faq--container[data-faq-single="true"]').forEach(function (wrap) {
-      wrap.querySelectorAll('details.faq__item').forEach(function (det) {
-        det.addEventListener('toggle', function () {
-          const open = det.open;
-          // Actualiza aria-expanded del summary
-          const summary = det.querySelector('.faq__question');
-          if (summary) summary.setAttribute('aria-expanded', open ? 'true' : 'false');
 
-          if (open) {
-            wrap.querySelectorAll('details.faq__item[open]').forEach(function (other) {
-              if (other !== det) other.removeAttribute('open');
-              const s = other.querySelector('.faq__question');
-              if (s) s.setAttribute('aria-expanded', 'false');
-            });
-          }
-        });
+  document.querySelectorAll('.section__faq--container[data-faq-single="true"]').forEach(function (wrap) {
+    wrap.querySelectorAll('details.faq__item').forEach(function (det) {
+      det.addEventListener('toggle', function () {
+        const open = det.open;
+        // Actualiza aria-expanded del summary
+        const summary = det.querySelector('.faq__question');
+        if (summary) summary.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+        if (open) {
+          wrap.querySelectorAll('details.faq__item[open]').forEach(function (other) {
+            if (other !== det) other.removeAttribute('open');
+            const s = other.querySelector('.faq__question');
+            if (s) s.setAttribute('aria-expanded', 'false');
+          });
+        }
       });
     });
+  });
 
-    const $slider = $('.js-reviews-slider');
+  setTimeout(() => {
+    const $slider = $('.js-specialist-slider');
     if (!$slider.length || typeof $.fn.slick !== 'function') return;
-
+  
     $slider.slick({
-      slidesToShow: 4,
+      slidesToShow: 3,
       slidesToScroll: 1,
       infinite: true,
       arrows: true,
       dots: true,
-      appendArrows: $('.reviews__nav'),
-      appendDots: $('.js-reviews-dots'),
-      prevArrow: $('.reviews__arrow--prev'),
-      nextArrow: $('.reviews__arrow--next'),
       autoplay: false,
       responsive: [
-        { breakpoint: 1280, settings: { slidesToShow: 1 } },
-        // { breakpoint: 992,  settings: { slidesToShow: 2 } },
-        // { breakpoint: 576,  settings: { slidesToShow: 1 } },
+        { breakpoint: 1280, settings: { slidesToShow: 3 } },
+        { breakpoint: 992,  settings: { slidesToShow: 2 } },
+        { breakpoint: 576,  settings: { slidesToShow: 1 } },
       ]
-
-    });
-    const $sliderGallery = $('.js-gallery-slider');
-    if (!$sliderGallery.length || typeof $.fn.slick !== 'function') return;
-
-    $sliderGallery.slick({
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      infinite: true,
-      arrows: false,
-      dots: false,
-      fade: true,
-      autoplaySpeed: 5000,
-      speed: 1000,
-      autoplay: true,
+  
     });
     
+  }, 300);
+
 })

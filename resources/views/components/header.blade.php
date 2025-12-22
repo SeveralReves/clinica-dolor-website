@@ -26,7 +26,7 @@
 
     $button = [
       'title' => 'Agendar una cita',
-      'url' => '/#',
+      'url' => '/agendar',
     ]
 @endphp
 
