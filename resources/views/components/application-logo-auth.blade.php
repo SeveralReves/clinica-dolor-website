@@ -1,5 +1,5 @@
 @php
-    $logo = asset('/images/logos/logo-trazo.svg');
+    $logo = asset('/images/logos/logo.svg');
     $width = isset($width) && !empty($width) ? $width : '' ;
     $height = isset($height) && !empty($height) ? $height : '' ;
 @endphp 

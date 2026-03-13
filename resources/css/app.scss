@@ -2,6 +2,7 @@
 @use 'base' as *;
 
 // components
+@use 'components/layout' as *;
 @use 'components/buttons' as *;
 @use 'components/header' as *;
 @use 'components/footer' as *;
@@ -11,6 +12,8 @@
 @use 'components/booking' as *;
 @use 'components/error' as *;
 @use 'components/schedule' as *;
+@use 'components/table' as *;
+@use 'components/form' as *;
 
 @import "boxicons/css/boxicons.min.css";
 

@@ -1,0 +1,124 @@
+@use '../base' as *;
+
+.table-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  .input-with-icon {
+    position: relative;
+    .spinner {
+      position: absolute;
+      right: 15px;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      height: 20px;
+      width: 20px;
+      border: 3px dotted #1e293b;
+      border-radius: 10px;
+      animation: rotate 5s infinite;
+    }
+  }
+  &__label {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  &__title {
+    font-size: 18px;
+    color: #333;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba($border-color, 0.1);
+  }
+  &__input,
+  &__textarea {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px 12px;
+    outline: none;
+    color: #333;
+  }
+  
+  &__textarea {
+    resize: vertical;
+  }
+  
+  &__error {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #c0392b;
+  }
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pagination {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 14px;
+  flex-wrap: wrap;
+  &__page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    &.is-active {
+      color: #fff;
+      font-weight: 700;
+      text-decoration: underline;
+    }
+  }
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 6px 10px;
+    transition: all 0.35s;
+    &:hover {
+      color: #fff;
+    }
+    &--more {
+      margin: 40px auto;
+    }
+  }
+}
+
+.button__secondary.is-active {
+  border: 1px solid #000;
+  font-weight: 700;
+}
+
+.pagination__meta {
+  margin-left: auto;
+  font-size: 12px;
+  opacity: .75;
+}
+
+@-webkit-keyframes rotate {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to { 
+    -webkit-transform: rotate(360deg);
+  }
+}

@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MovingQuote;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {   
-        $quotes = MovingQuote::all();
 
-        return view('dashboard', compact('quotes'));
+        return view('dashboard');
+    }
+    public function users(Request $request)
+    {   
+        $users = User::all();
+
+        return view('dashboard.users', compact('users'));
     }
 }

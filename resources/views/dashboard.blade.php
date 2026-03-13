@@ -6,8 +6,4 @@
     </x-slot>
 
     
-  <div
-      data-vue="BookingTable"
-      data-props='@json(["quotes" => $quotes])'>
-  </div>
 </x-app-layout>

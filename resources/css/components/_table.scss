@@ -1,0 +1,75 @@
+@use '../base' as *;
+
+.datatable {
+  overflow: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  color: $text;
+  max-width: calc(100vw - 20px);
+  th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid $border-color;
+    color: $text;
+  }
+  th {
+    background-color: $primary;
+    font-weight: bold;
+    color: $white;
+  }
+  &__header {
+    // background-color: #fff;
+    padding: 20px 10px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    // border: 1px solid #d2d2d2;
+    @media (max-width: 992px) {
+      padding: 20px;
+    }
+    &--sort {
+      position: relative;
+      &--options {
+          position: absolute;
+          top: calc(100% + 10px);
+          padding: 10px 5px;
+          right: 0;
+          background: #fff;
+          border-radius: 10px;
+          border: 1px solid $border-color;
+      }
+    }
+    &--header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: $primary;
+      &-button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+      &-title {
+        color: $primary;
+        font-family: 'Inter', sans-serif;
+      }
+      &-description {
+        color: $text;
+        font-size: 14px;
+      }
+    }
+  }
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+}
