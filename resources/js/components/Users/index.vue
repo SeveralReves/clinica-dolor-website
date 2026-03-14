@@ -40,8 +40,8 @@
           <option :value="20">20</option>
           <option :value="50">50</option>
         </select>
-        <button class="button__secondary" @click="applyFilters">Filtrar</button>
-        <button class="button__secondary" @click="resetFilters">Limpiar</button>
+        <button class="button__secondary button--medium" @click="applyFilters">Filtrar</button>
+        <button class="button__secondary button--medium" @click="resetFilters">Limpiar</button>
 
         <div style="margin-left: auto; display: flex; gap: 10px;">
           <!-- <button class="button__ghost button--small" @click="exportData">

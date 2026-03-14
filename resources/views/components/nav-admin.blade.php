@@ -5,12 +5,12 @@
         Dashboard
       </span>
     </a>
-    {{-- @role(['admin', 'superadmin']) --}}
+    @role(['admin', 'superadmin'])
       <a href="{{ route('users') }}" class="layout__admin--nav-item {{ request()->routeIs('users') ? 'active' : ''}}">
         <span class="material-symbols-outlined">people</span>
         <span>
           Usuarios
         </span>
       </a>
-    {{-- @endrole --}}
+    @endrole
 </div>

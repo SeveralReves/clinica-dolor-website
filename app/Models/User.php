@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Support\Acl;
 
 class User extends Authenticatable
 {
@@ -43,4 +44,36 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function getRoleAttribute($value)
+    {
+        return Acl::normalizeRole($value);
+    }
+
+   public function hasRole(string|array $roles): bool
+    {
+        return Acl::hasRole($this, $roles);
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        return Acl::can($this, $permission);
+    }
+
+    public function hasAnyPermission(array $permissions): bool
+    {
+        return Acl::any($this, $permissions);
+    }
+
+    public function hasAllPermissions(array $permissions): bool
+    {
+        return Acl::all($this, $permissions);
+    }
+    /* Con esto se puede hacer
+        @can('users.update')
+            <button>Editar usuario</button>
+        @endcan
+        o en controllers
+        $this->authorize('units.move_state'); // o Gate::authorize(...)
+    */
+
 }

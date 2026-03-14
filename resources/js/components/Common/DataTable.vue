@@ -21,10 +21,10 @@
               </template>
               <template v-else-if="column.field == 'actions'">
                 <div class="table__actions">
-                  <button class="button__primary button--small" @click="$emit('edit', row)">
+                  <button class="button__danger button--small" @click="$emit('edit', row)" style="color: #26467b">
                     <span class="material-symbols-outlined">edit</span>
                   </button>
-                  <button class="button__danger button--small" @click="$emit('delete', row)">
+                  <button class="button__danger button--small" @click="$emit('delete', row)" style="color: #b81313">
                     <span class="material-symbols-outlined">delete</span>
                   </button>
                 </div>

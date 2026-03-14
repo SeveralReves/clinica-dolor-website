@@ -49,11 +49,11 @@
             </div>
         </div>
 
-        {{-- <script>
+        <script>
             window.__ACL__ = @json([
                 'role' => auth()->user()?->role,
                 'permissions' => auth()->check() ? \App\Support\Acl::userPermissions(auth()->user()) : [],
             ]);
-        </script> --}}
+        </script>
     </body>
 </html>
