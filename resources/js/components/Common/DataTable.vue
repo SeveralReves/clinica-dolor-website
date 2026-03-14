@@ -19,16 +19,30 @@
               <template v-if="column.formatter">
                 {{ column.formatter(row[column.field]) }}
               </template>
+
               <template v-else-if="column.field == 'actions'">
                 <div class="table__actions">
                   <button class="button__danger button--small" @click="$emit('edit', row)" style="color: #26467b">
                     <span class="material-symbols-outlined">edit</span>
+                  </button>
+                  <button v-if="model == 'specialist'" class="button__danger button--small" @click="$emit('schedules', row)" style="color: #ffa200">
+                    <span class="material-symbols-outlined">calendar_clock</span>
                   </button>
                   <button class="button__danger button--small" @click="$emit('delete', row)" style="color: #b81313">
                     <span class="material-symbols-outlined">delete</span>
                   </button>
                 </div>
               </template>
+
+              <template v-else-if="column.field == 'photo_path'">
+                <div class="table__photo">
+                  <img :src="row[column.field] ? `/storage/${row[column.field]}` : placeholderImage" alt="" class="card__vessel--image">
+                </div>
+              </template>
+              <template v-else-if="column.field == 'is_active'">
+                {{ row[column.field] == '1' ? 'Activo' : 'Inactivo' }}
+              </template>
+
               <template v-else>
                 {{ row[column.field] }}
               </template>
@@ -99,6 +113,11 @@ export default {
       type: String,
       required: false,
       default: ''
+    }
+  },
+  data(){
+    return {
+      placeholderImage: '/images/doctors/doctor-placeholder.webp',
     }
   },
   computed: {

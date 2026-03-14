@@ -77,19 +77,25 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name'  => 'string|max:255',
-            'email' => ['email', Rule::unique('users')->ignore($user->id)],
-            'role'     => ['required', Rule::in('admin', 'assist', 'doctor', 'superadmin')],
+            'name'     => 'string|max:255',
+            'email'    => ['email', Rule::unique('users')->ignore($user->id)],
+            'role'     => ['required', Rule::in(['admin', 'assist', 'doctor', 'superadmin'])],
+            // 'confirmed' verifica que 'password' coincida con 'password_confirmation'
+            'password' => 'nullable|confirmed|min:8', 
         ]);
 
-        $user->update($request->only(['name', 'email', 'role']));
+        // Actualizamos los datos básicos
+        $user->fill($request->only(['name', 'email', 'role']));
 
-        if ($request->has('password')) {
-            $user->update(['password' => $request->password]);
+        // Solo asignamos el password si el usuario escribió algo en el campo
+        if ($request->filled('password')) {
+            $user->password = $request->password;
         }
 
+        $user->save();
+
         return response()->json([
-            'message' => 'Usuario actualizado',
+            'message' => 'Usuario actualizado correctamente',
             'user'    => $user
         ]);
     }

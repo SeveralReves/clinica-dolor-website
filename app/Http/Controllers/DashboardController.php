@@ -18,4 +18,10 @@ class DashboardController extends Controller
 
         return view('dashboard.users', compact('users'));
     }
+    public function specialists(Request $request)
+    {   
+        // $specialists = Specialists::all();
+
+        return view('dashboard.specialists');
+    }
 }

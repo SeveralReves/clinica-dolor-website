@@ -6,6 +6,14 @@
       </span>
     </a>
     @role(['admin', 'superadmin'])
+      <a href="{{ route('specialists') }}" class="layout__admin--nav-item {{ request()->routeIs('specialists') ? 'active' : ''}}">
+        <span class="material-symbols-outlined">medical_services</span>
+        <span>
+          Especialistas
+        </span>
+      </a>
+    @endrole
+    @role(['admin', 'superadmin'])
       <a href="{{ route('users') }}" class="layout__admin--nav-item {{ request()->routeIs('users') ? 'active' : ''}}">
         <span class="material-symbols-outlined">people</span>
         <span>
