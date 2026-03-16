@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\SpecialistController;
+use App\Http\Controllers\Api\AppointmentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,5 +26,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('users', UserController::class);
 
         Route::apiResource('specialists', SpecialistController::class);
+
+        // Citas y Disponibilidad (Landing/App)
+        Route::get('appointments/busy-slots', [AppointmentController::class, 'getBusySlots']);
     });
 });
+
+Route::post('appointments', [AppointmentController::class, 'store']);

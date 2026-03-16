@@ -9,7 +9,6 @@ import '@vueform/multiselect/themes/default.css'
 import axios from 'axios'
 import Swal from 'sweetalert2' 
 import { onMounted } from 'vue'
-
 // Props
 const props = defineProps({
   wp_action: { type: String, default: 'success' },
@@ -17,6 +16,32 @@ const props = defineProps({
   disabledDates: { type: Array, default: () => [] }
 })
 
+
+const busyHours = ref([]) 
+const loadingHours = ref(false)
+// Función para buscar disponibilidad en el servidor
+async function fetchBusyHours() {
+  if (!form.value.specialist || !form.value.date) return
+  
+  loadingHours.value = true
+  try {
+    const { data } = await axios.get('/api/appointments/busy-slots', {
+      params: {
+        specialist_id: form.value.specialist.id,
+        date: form.value.date.toISOString().split('T')[0] // Formato YYYY-MM-DD
+      }
+    })
+    busyHours.value = data // Ejemplo: ["09:00 AM", "11:00 AM"]
+  } catch (e) {
+    console.error("Error cargando disponibilidad", e)
+  } finally {
+    loadingHours.value = false
+  }
+}
+
+
+// Helper para saber si una hora está disponible
+const isHourBusy = (h) => busyHours.value.includes(h)
 
 const vvForm = ref(null) 
 
@@ -92,29 +117,46 @@ const isDisabledForm = computed(() => {
 const isDateDisabled = (d) => {
   const x = normalizeDay(d)
   if (x < todayStart.value) return true 
-  if (form.value.specialist === null){
+  
+  if (!form.value.specialist || !form.value.specialist.hours) {
     return true
-  }else{
-    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-    const dayName = dayNames[x.getDay()]
-    const specialistHours = form.value.specialist.hours
-    if (!specialistHours.hasOwnProperty(dayName) || specialistHours[dayName].length === 0) {
-      return true 
-    }
   }
-  if (x.getDay() === 0 || x.getDay() === 6) return true // weekends
+
+  const dayName = dayNames[x.getDay()]
+  const specialistHours = form.value.specialist.hours
+
+  // Verificamos si el día existe en el objeto y si tiene al menos una hora
+  if (!specialistHours[dayName] || specialistHours[dayName].length === 0) {
+    return true 
+  }
+
+  if (x.getDay() === 0 || x.getDay() === 6) return true // Fines de semana
 }
 
+// const changeSpecialist = (s) => {
+//   form.value.specialist = s
+//   form.value.date = null
+//   form.value.hour = null
+// }
+
+// Modificamos los setters para que disparen la búsqueda
 const changeSpecialist = (s) => {
   form.value.specialist = s
   form.value.date = null
   form.value.hour = null
+  busyHours.value = []
 }
 
 const changeDate = (d) => {
   form.value.date = d
   form.value.hour = null
+  fetchBusyHours() // <--- Llamada a la API
 }
+
+// const changeDate = (d) => {
+//   form.value.date = d
+//   form.value.hour = null
+// }
 
 const changeBirthday = (d) => {
   form.value.birthday = d
@@ -139,13 +181,26 @@ async function onSubmit(values) {
 
   try {
     const res = await axios.post(props.wp_action, payload) // ✅ props.wp_action
-    Swal?.fire({
+    // Swal?.fire({
+    //   icon: 'success',
+    //   title: '¡Listo!',
+    //   text: 'Tu solicitud de cita fue enviada correctamente.',
+    //   timer: 2000,
+    //   showConfirmButton: false,
+    // })
+    const reference = res.data.appointment.reference_id; // Aquí viene el A-XXXXXXXX
+
+    Swal.fire({
       icon: 'success',
-      title: '¡Listo!',
-      text: 'Tu solicitud de cita fue enviada correctamente.',
-      timer: 2000,
-      showConfirmButton: false,
-    })
+      title: 'Cita Registrada',
+      text: `Tu solicitud de cita fue enviada correctamente. Tu número de referencia es: ${reference}`,
+      customClass: { container: 'swal-high-z', confirmButton: 'button__primary', },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Opción A: Redirección estándar de navegador
+        window.location.href = `/agendar/gracias/${reference}`;
+      }
+    });
   } catch (e) {
     console.error(e)
     Swal?.fire({
@@ -173,7 +228,7 @@ async function onSubmit(values) {
             <!-- Specialist cards go here -->
             <template v-for="specialist in specialists" :key="specialist.id">
               <article @click="changeSpecialist(specialist)" class="booking__card--specialist" :class="{active: form.specialist?.id === specialist.id}">
-                <img :src="specialist.photo.url" :alt="specialist.name" class="booking__card--specialist-photo" />
+                <img :src="specialist.photo_url" :alt="specialist.name" class="booking__card--specialist-photo" />
                 <div class="booking__card--specialist-content">
                   <h3 class="booking__card--specialist-name">{{ specialist.name }}</h3>
                   <p class="booking__card--specialist-specialty">{{ specialist.role }}</p>
@@ -210,10 +265,27 @@ async function onSubmit(values) {
             <div class="booking__card--hours-label">
               <span>Horarios disponibles:</span>
             </div>
-            <div class="booking__card--hours-list" v-if="form.date !== null ">
+            <!-- <div class="booking__card--hours-list" v-if="form.date !== null ">
               <button class="booking__card--hour" v-for="hour in form.specialist?.hours[dayNames[normalizeDay(form.date).getDay()]]" :class="{selected: form.hour === hour}" :key="hour" @click="changeHour(hour)">
                 {{ hour }}
               </button>
+            </div> -->
+            <div class="booking__card--hours-list" v-if="form.date !== null">
+              <template v-for="hour in form.specialist?.hours[dayNames[normalizeDay(form.date).getDay()]]" :key="hour">
+                <button 
+                  v-if="!isHourBusy(hour)" 
+                  class="booking__card--hour" 
+                  :class="{selected: form.hour === hour}" 
+                  @click="changeHour(hour)"
+                >
+                  {{ hour }}
+                </button>
+              </template>
+              
+              <div v-if="loadingHours" class="loading-text">Consultando disponibilidad...</div>
+              <div v-else-if="form.specialist?.hours[dayNames[normalizeDay(form.date).getDay()]].every(h => isHourBusy(h))" class="no-hours">
+                No hay horarios disponibles para este día.
+              </div>
             </div>
           </div>
         </div>
@@ -286,7 +358,7 @@ async function onSubmit(values) {
           </h3>
           <div class="booking__aside--header">
             <div v-if="form.specialist" class="booking__aside--specialist">
-              <img  :src="form.specialist.photo.url" :alt="form.specialist.name" class="booking__aside--specialist-photo" />
+              <img  :src="form.specialist.photo_url" :alt="form.specialist.name" class="booking__aside--specialist-photo" />
               <div class="booking__aside--specialist-info">
                 <p class="booking__aside--specialist-name">{{ form.specialist ? form.specialist.name : 'Especialista no seleccionado' }}</p>
                 <p class="booking__aside--specialist-role">{{ form.specialist ? form.specialist.role : '' }}</p>

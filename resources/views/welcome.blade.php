@@ -115,79 +115,9 @@
     @include('components.section-specialists', [
         'title' => 'Conoce a Nuestros Especialistas',
         'description' => 'Un equipo dedicado de profesionales comprometidos con tu bienestar.',
-        'specialists' => [
-            [
-                'id' => 1,
-                'name' => 'Dra. CARMEN CARRILLO',
-                'role' => 'Medicina del Dolor - Anestesiólogo',
-                'description' => 'Con más de una década de experiencia, la Dra. Carrillo es la especialista experta en Medicina del Dolor.',
-                'photo' => [
-                    'url' => asset('/images/doctors/doctor-1.webp'),
-                    'alt' => 'Dra. CARMEN CARRILLO'
-                ]
-            ],
-            [
-                'id' => 2,
-                'name' => 'Dr. MARIA GUILLEN',
-                'role' => 'Anestesiólogo',
-                'description' => 'Como médico en jefe de Clínica del Dolor Apure, la Dra. Guillen se especializa en Anestesiología.',
-                'photo' => [
-                    'url' => asset('/images/doctors/doctor-2.webp'),
-                    'alt' => 'Dra. CARMEN CARRILLO'
-                ]
-            ],
-            [
-                'id' => 3,
-                'name' => 'Dra. Natalia Ramos',
-                'role' => 'Medicina fisica y Rehabilitacion',
-                'description' => 'La Dra. Ramos cuenta con más de 15 años de experiencia en las áreas de fertilidad y obstetricia.',
-                'photo' => [
-                    'url' => asset('/images/doctors/doctor-3.webp'),
-                    'alt' => 'Dra. CARMEN CARRILLO'
-                ]
-            ],
-            [
-                'id' => 4,
-                'name' => 'Dr. Juan Pérez',
-                'role' => 'Especialista en Manejo del Dolor',
-                'description' => 'Con más de 15 años de experiencia en el tratamiento del dolor crónico, el Dr. Pérez lidera nuestro equipo con un enfoque centrado en el paciente.',
-                'photo' => [
-                    'url' => asset('/images/doctors/doctor1.jpg'),
-                    'alt' => 'Dr. Juan Pérez'
-                ]
-            ],
-            [
-                'id' => 5,
-                'name' => 'Dra. María Gómez',
-                'role' => 'Fisioterapeuta',
-                'description' => 'Especialista en rehabilitación y fisioterapia para el manejo del dolor.',
-                'photo' => [
-                    'url' => asset('/images/doctors/doctor2.png'),
-                    'alt' => 'Dra. María Gómez'
-                ]
-            ],
-            [
-                'id' => 6,
-                'name' => 'Dr. Carlos Rodríguez',
-                'role' => 'Anestesiólogo',
-                'description' => 'Experto en técnicas de anestesia y procedimientos intervencionistas para el alivio del dolor.',
-                'photo' => [
-                    'url' => asset('/images/doctors/doctor3.png'),
-                    'alt' => 'Dr. Carlos Rodríguez'
-                ]
-            ]
-        ]
+        'specialists' => $specialists
     ])
 
-    {{-- @include('components.section-booking', [
-        'title' => 'Book Your Move Online',
-        'description' => 'Get a free quote in just a few simple steps.',
-        'button' => [
-            'url' => '#booking',
-            'title' => 'Book your date now'
-        ],
-        'wp_action' => 'booking'
-    ]) --}}
 
     @include('components.section-faq', [
         'title' => 'Preguntas frecuentes',
@@ -230,13 +160,4 @@
     ])
 
 
-{{-- <div class="container">
-    <p>This is the user content</p>
-    
-    <div
-        data-vue="ExampleComponent"
-        data-props='@json(["postId" => 123, "initial" => false])'>
-    </div>
-
-</div> --}}
 @stop

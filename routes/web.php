@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\WebController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 
@@ -22,12 +23,9 @@ Route::get('/legals', function () {
 Route::get('/agendar/gracias/{id}', function ($id) {
     return view('schedule-thanks', ['id' => $id]);
 });
-Route::get('/agendar', function () {
-    return view('schedule');
-});
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/agendar', [WebController::class, 'schedule'])->name('schedule');
+
+Route::get('/', [WebController::class, 'home'])->name('home');
 
 Route::get('/dashboard',[DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
