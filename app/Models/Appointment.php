@@ -22,13 +22,22 @@ class Appointment extends Model
     public function specialist() {
         return $this->belongsTo(Specialist::class);
     }
-    protected static function boot()
+    public function logs() {
+        return $this->hasMany(AppointmentLog::class)->orderBy('created_at', 'desc');
+    }    protected static function boot()
     {
         parent::boot();
 
         // Se ejecuta justo antes de crear el registro en la BD
         static::creating(function ($appointment) {
             $appointment->reference_id = self::generateUniqueReference();
+        });
+        
+        static::created(function ($appointment) {
+            $appointment->logs()->create([
+                'status_label' => 'Cita Solicitada',
+                'description' => 'La solicitud ha sido recibida por el sistema.'
+            ]);
         });
     }
 

@@ -1,0 +1,246 @@
+@use '../base' as *;
+
+// Variables de Colores (Basadas en tu imagen)
+$color-card: #fff;
+$color-accent: #41d28f;
+$text-muted: #94a3b8;
+
+.appointment-status {
+  background-color: $bg-color;
+  color: $text;
+  padding: 120px 0;
+
+  &__header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 4rem;
+  }
+
+  &__title {
+    margin-bottom: 1rem;
+    color: $primary;
+  }
+
+  &__description {
+    max-width: 550px;
+    margin: auto;
+  }
+
+  &__search-bar {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__state {
+    text-align: center;
+    padding: 4rem;
+    
+    &--empty {
+      color: $text-muted;
+      .state-icon { font-size: 4rem; margin-bottom: 1rem; }
+    }
+  }
+}
+
+// Estilos de Input Group
+.field-group {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+
+  &__icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $color-accent;
+  }
+
+  &__input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid $border-color;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 50px;
+    transition: all 0.3s;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+// Card de Estatus
+.status-card {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: $color-card;
+  border-radius: 2rem;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+  &__main {
+    padding: 2.5rem;
+  }
+  &__ref {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  &__doctor {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    margin-bottom: 2.5rem;
+
+    &-photo {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid $color-accent;
+    }
+
+    &-name { font-size: 1.8rem; margin: 0; }
+    &-role { color: $color-accent; margin: 0; }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  &__log {
+    background: $primary;
+    padding: 2.5rem;
+    border-left: 1px solid $border-color;
+    &-title {
+      color: $white;
+    }
+  }
+}
+
+// Timeline
+.timeline {
+  position: relative;
+  margin-top: 2rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: $border-color;
+  }
+
+  &__item {
+    position: relative;
+    padding-left: 3.5rem;
+    margin-bottom: 2.5rem;
+
+    &--latest {
+      .timeline__marker { background: $color-accent; color: black; }
+      .timeline__label { color: white; font-weight: bold; }
+    }
+  }
+
+  &__marker {
+    position: absolute;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    background: $color-card;
+    border: 2px solid $color-accent;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    
+    span { font-size: 18px; }
+  }
+
+  &__label { margin: 0; font-size: 1rem; color: $text-muted; }
+  &__date { font-size: 0.8rem; color: $color-accent; margin: 0; }
+}
+
+// Botones y Badges
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: rgba(34, 197, 94, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  color: $color-accent;
+  
+  &__info {
+    display: flex;
+    flex-direction: column;
+    small { font-size: 0.6rem; opacity: 0.8; }
+  }
+}
+
+// Info Blocks
+.info-block {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1.2rem;
+  border-radius: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  
+  &__icon { color: $color-accent; }
+  &__content {
+    small { color: $text-muted; font-size: 0.7rem; }
+    strong { display: block; margin-top: 2px; }
+    p { margin: 0; font-size: 0.9rem; color: $text-muted; }
+  }
+}
+
+// Loader Spinner
+.loader-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid black;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .status-card { grid-template-columns: 1fr; }
+  .status-card__log { border-left: none; border-top: 1px solid $border-color; }
+  .appointment-status__search-bar { flex-direction: column; }
+  .field-group { max-width: 100%; }
+}

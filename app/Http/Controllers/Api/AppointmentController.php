@@ -98,4 +98,29 @@ class AppointmentController extends Controller
 
         return response()->json($busySlots);
     }
+    public function checkStatus(Request $request)
+    {
+        $request->validate([
+            'search' => 'required|string'
+        ]);
+
+        $query = $request->search;
+
+        $appointment = Appointment::with(['patient', 'specialist', 'logs'])
+            ->where('reference_id', $query)
+            // O buscamos a través de la relación con el paciente
+            ->orWhereHas('patient', function($q) use ($query) {
+                $q->where('email', $query);
+            })
+            ->orderBy('date', 'desc')
+            ->orderBy('hour', 'desc')
+            ->first();
+
+
+        if (!$appointment) {
+            return response()->json(['message' => 'No encontramos ninguna cita con esos datos.'], 404);
+        }
+
+        return response()->json($appointment);
+    }
 }

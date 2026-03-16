@@ -7,6 +7,10 @@ use App\Models\Specialist;
 
 class WebController extends Controller
 {
+    public function consult(Request $request)
+    {   
+        return view('consult');
+    }
     public function home(Request $request)
     {   
         $specialists = Specialist::where('is_active', 1)->get();
