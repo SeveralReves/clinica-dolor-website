@@ -3,30 +3,31 @@
 @section('content')
 
     @include('components.schedule-thanks', [
-        'id' => $id,
+        'id' => $appointment->reference_id,
         'title' => '¡Gracias por agendar tu cita!',
-        'subtitle' => 'Hemos enviado un correo electrónico de confirmación a <strong>user@email.com</strong>. Por favor, llegue 15 minutos antes.',
-        'specialists' => [
-            'id' => 1,
-            'name' => 'Dra. CARMEN CARRILLO',
-            'role' => 'Medicina del Dolor - Anestesiólogo',
-            'description' => 'Con más de una década de experiencia, la Dra. Carrillo es la especialista experta en Medicina del Dolor.',
+        'subtitle' => 'Hemos enviado un correo electrónico de confirmación a <strong>' . $appointment->patient->email . '</strong>. Por favor, llegue 15 minutos antes.',
+        
+        // Datos del Especialista desde la relación
+        'specialist' => [
+            'id' => $appointment->specialist->id,
+            'name' => $appointment->specialist->name,
+            'role' => $appointment->specialist->specialty,
+            'description' => $appointment->specialist->description,
             'photo' => [
-                'url' => asset('/images/doctors/doctor-1.webp'),
-                'alt' => 'Dra. CARMEN CARRILLO'
+                'url' => asset('storage/' . $appointment->specialist->photo_path),
+                'alt' => $appointment->specialist->name
             ],
-            'hours' => [
-                'monday' => ['09:00 AM', '10:00 AM', '11:00 AM', '01:00 PM', '02:00 PM', '03:00 PM'],
-                'wednesday' => ['09:00 AM', '5:00 PM'],
-                'friday' => ['09:00 AM', '5:00 PM']
-            ]
         ],
-        'status' => 'scheduled',
-        'phone' => "04242965626",
-        'email' => "user@email.com",
-        'reason' => "asdasdas",
-        'date' => "2026-01-30T04:00:00.000Z",
-        'hour' => "09:00 AM",
+        
+        // Datos de la Cita y Paciente
+        'status' => $appointment->status,
+        'phone'  => $appointment->patient->phone,
+        'email'  => $appointment->patient->email,
+        'reason' => $appointment->reason,
+        
+        // Formateamos la fecha: "Miércoles, 25 de Marzo de 2026"
+        'date'   => $appointment->date->translatedFormat('l, d \d\e F \d\e Y'),
+        'hour'   => $appointment->hour,
     ])
 
 @stop

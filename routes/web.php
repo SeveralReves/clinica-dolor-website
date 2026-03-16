@@ -20,11 +20,8 @@ use Illuminate\Support\Facades\Artisan;
 Route::get('/legals', function () {
     return view('legal');
 });
-Route::get('/agendar/gracias/{id}', function ($id) {
-    return view('schedule-thanks', ['id' => $id]);
-});
+Route::get('/agendar/gracias/{reference}', [WebController::class, 'Thanks'])->name('thanks');
 Route::get('/agendar', [WebController::class, 'schedule'])->name('schedule');
-
 Route::get('/', [WebController::class, 'home'])->name('home');
 
 Route::get('/dashboard',[DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');

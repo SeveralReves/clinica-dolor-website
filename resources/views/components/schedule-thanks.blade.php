@@ -15,10 +15,14 @@
             <div class="section__thanks--header-item">
               <h3 class="section__thanks--header-title">Estado de la cita</h3>
               <p class="section__thanks--header-info">
-                @if($status === 'scheduled')
-                  Programada
+                @if($status === 'confirmed')
+                  Confirmada
+                @elseif($status === 'pending')
+                  Pendiente
                 @elseif($status === 'canceled')
                   Cancelada
+                @elseif($status === 'completed')
+                  Completada
                 @else
                   Desconocido
                 @endif
@@ -27,16 +31,16 @@
             
           </div>
           <div class="section__thanks--specialist">
-              <img src="{{ $specialists['photo']['url'] }}" alt="{{ $specialists['photo']['alt'] }}" class="section__thanks--specialist-photo">
+              <img src="{{ $specialist['photo']['url'] }}" alt="{{ $specialist['photo']['alt'] }}" class="section__thanks--specialist-photo">
             <div class="section__thanks--specialist-info">
-              <h3 class="section__thanks--specialist-name">{{ $specialists['name'] }}</h3>
-              <p class="section__thanks--specialist-role">{{ $specialists['role'] }}</p>
+              <h3 class="section__thanks--specialist-name">{{ $specialist['name'] }}</h3>
+              <p class="section__thanks--specialist-role">{{ $specialist['role'] }}</p>
             </div>
           </div>
           <div class="section__thanks--details">
             <h3 class="section__thanks--header-title">Detalles de la cita</h3>
             <p class="section__thanks--details-info">
-              <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($date)->locale('es')->isoFormat('dddd, D [de] MMMM [de] YYYY') }}<br>
+              <strong>Fecha:</strong> {{ $date }}<br>
               <strong>Hora:</strong> {{ $hour }}<br>
               <strong>Teléfono:</strong> {{ $phone }}<br>
               <strong>Email:</strong> {{ $email }}<br>

@@ -12,6 +12,14 @@ class WebController extends Controller
         $specialists = Specialist::where('is_active', 1)->get();
         return view('welcome', compact('specialists'));
     }
+    public function thanks(Request $request, $reference)
+    {   
+        $appointment = \App\Models\Appointment::with(['patient', 'specialist'])
+            ->where('reference_id', $reference)
+            ->firstOrFail();
+
+        return view('schedule-thanks', compact('appointment'));
+    }
     public function schedule(Request $request)
     {   
         $specialists = Specialist::with('schedules')->get()->map(function($s) {
