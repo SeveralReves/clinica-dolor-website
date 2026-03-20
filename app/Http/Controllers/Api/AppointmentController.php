@@ -73,15 +73,63 @@ class AppointmentController extends Controller
             ], 201);
         });
     }
-    public function index()
+    public function index(Request $request)
     {
-      // Útil para el dashboard de la clínica
-      $appointments = Appointment::with(['patient', 'specialist'])
-      ->orderBy('date', 'asc')
-      ->orderBy('hour', 'asc')
-      ->get();
-      
-      return response()->json($appointments);
+        $query = Appointment::with(['patient', 'specialist']);
+
+        // Filtro por búsqueda (Referencia, Nombre paciente, Email paciente)
+        if ($request->filled('q')) {
+            $q = $request->q;
+            $query->where(function($search) use ($q) {
+                $search->where('reference_id', 'like', "%$q%")
+                      ->orWhereHas('patient', function($p) use ($q) {
+                          $p->where('name', 'like', "%$q%")
+                            ->orWhere('email', 'like', "%$q%");
+                      });
+            });
+        }
+
+        // Filtro por estado
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        return $query->orderBy('date', 'desc')
+                     ->orderBy('hour', 'desc')
+                     ->paginate($request->per_page ?? 10);
+    }
+    public function update(Request $request, Appointment $appointment)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:pending,confirmed,cancelled,completed',
+            'date'   => 'sometimes|date',
+            'hour'   => 'sometimes|string',
+        ]);
+
+        // Si el estado cambia, registramos el log automáticamente
+        if ($request->has('status') && $request->status !== $appointment->status) {
+            $labels = [
+                'confirmed' => 'Cita Confirmada',
+                'cancelled' => 'Cita Cancelada',
+                'completed' => 'Consulta Finalizada',
+                'pending'   => 'Cita en Espera'
+            ];
+
+            $appointment->logs()->create([
+                'status_label' => $labels[$request->status] ?? 'Estado Actualizado',
+                'description'  => 'El estado de la cita fue cambiado por el personal administrativo.'
+            ]);
+        }
+
+        $appointment->update($validated);
+
+        return response()->json(['message' => 'Cita actualizada', 'appointment' => $appointment->load('patient')]);
+    }
+
+    public function destroy(Appointment $appointment)
+    {
+        $appointment->delete();
+        return response()->json(['message' => 'Cita eliminada']);
     }
     public function getBusySlots(Request $request)
     {

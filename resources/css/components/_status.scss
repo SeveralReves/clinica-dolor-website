@@ -88,6 +88,9 @@ $text-muted: #94a3b8;
 
   &__main {
     padding: 2.5rem;
+    @media (max-width: 980px) {
+      padding: 40px;
+    }
   }
   &__ref {
     display: flex;
@@ -100,6 +103,11 @@ $text-muted: #94a3b8;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    @media (max-width: 980px) {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+      gap: 10px;
+    }
   }
 
   &__doctor {
@@ -107,7 +115,10 @@ $text-muted: #94a3b8;
     gap: 1.5rem;
     align-items: center;
     margin-bottom: 2.5rem;
-
+    @media (max-width: 980px) {
+      flex-direction: column;
+      margin-bottom: 10px;
+    }
     &-photo {
       width: 100px;
       height: 100px;
@@ -125,6 +136,9 @@ $text-muted: #94a3b8;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
     margin-bottom: 2.5rem;
+    @media (max-width: 980px) {
+      margin-bottom: 0;
+    }
   }
 
   &__actions {

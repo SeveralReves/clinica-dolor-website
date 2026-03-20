@@ -10,7 +10,7 @@
         </p>
       </div>
 
-      <div class="footer__top--column">
+      <div class="footer__top--column footer__top--column-nav">
         <div class="footer__top--title">
           Enlaces Rápidos
         </div>

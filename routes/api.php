@@ -32,5 +32,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 });
 
+Route::get('appointments', [AppointmentController::class, 'index']);
 Route::post('appointments', [AppointmentController::class, 'store']);
 Route::get('appointments/status', [AppointmentController::class, 'checkStatus']);

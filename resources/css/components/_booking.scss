@@ -3,6 +3,9 @@
 .booking {
   display: flex;
   gap: 12px;
+  @media (max-width: 1025px) {
+    flex-direction: column;
+  }
   &__content {
     flex: 1;
     max-width: 900px;
@@ -22,12 +25,18 @@
       display: flex;
       align-items: center;
       gap: 15px;
+      @media (max-width: 1025px) {
+        font-size: 18px;
+      }
     }
     &--content {
       margin-top: 20px;
       display: flex;
       gap: 12px;
       align-items: flex-start;
+      @media (max-width: 1025px) {
+        flex-direction: column;
+      }
     }
     &--date {
       flex: 1;
@@ -37,12 +46,22 @@
       background-color: rgba($primary, 0.2);
       margin: 0 10px;
       min-height: 100px;
+      @media (max-width: 1025px) {
+        display: none;
+      }
     }
     &--form {
+      @media (max-width: 1025px) {
+        margin-top: 10px;
+      }
       &-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 15px 20px;
+        @media (max-width: 1025px) {
+          display: flex;
+          flex-direction: column;
+        }
       }
       &-input {
         width: 100%;

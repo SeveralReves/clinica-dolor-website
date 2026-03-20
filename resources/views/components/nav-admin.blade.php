@@ -5,6 +5,14 @@
         Dashboard
       </span>
     </a>
+
+    <a href="{{ route('appointments') }}" class="layout__admin--nav-item {{ request()->routeIs('appointments') ? 'active' : ''}}">
+      <span class="material-symbols-outlined">calendar_month</span>
+      <span>
+        Citas
+      </span>
+    </a>
+
     @role(['admin', 'superadmin'])
       <a href="{{ route('specialists') }}" class="layout__admin--nav-item {{ request()->routeIs('specialists') ? 'active' : ''}}">
         <span class="material-symbols-outlined">medical_services</span>

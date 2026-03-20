@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
         Route::get('/usuarios', [DashboardController::class, 'users'])->name('users');
         Route::get('/especialistas', [DashboardController::class, 'specialists'])->name('specialists');
+        Route::get('/citas', [DashboardController::class, 'appointments'])->name('appointments');
     });
 });
 

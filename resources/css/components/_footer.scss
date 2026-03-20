@@ -37,7 +37,11 @@
       gap: 16px;
       @media (max-width: 1025px) {
         align-items: center;
+        margin: 30px auto 0;
         text-align: center;
+        &-nav {
+          display: none;
+        }
       }
     }
 
@@ -47,6 +51,7 @@
       line-height: 1.4;
       @media (max-width: 1025px) {
         text-align: center;
+        max-width: 400px;
       }
     }
   }
@@ -61,6 +66,9 @@
     gap: 12px;
     max-width: 300px;
     color: #ccc;
+    @media (max-width: 1025px) {
+      text-align: left;
+    }
     i {
       margin-top: 3px;
       font-size: 18px;
@@ -104,6 +112,7 @@
     margin-top: 12px;
     @media (max-width: 1025px) {
       margin-top: 2rem;
+      justify-content: center;
     }
     a {
       // margin-left: 1rem;

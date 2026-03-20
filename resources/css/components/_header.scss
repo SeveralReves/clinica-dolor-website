@@ -15,6 +15,9 @@
   width: 100%;
   background-color: #fff;
   transition: all 500ms ease-in-out;
+  @media (max-width: 1025px) {
+    padding: 0;
+  }
   &.headroom--not-top{
     @media (min-width: 1025px) {
       // pointer-events: none;
@@ -61,7 +64,12 @@
     text-transform: uppercase;
     img {
       @media (max-width: 1025px) {
-        width: 110px;
+        height: 50px;
+      }
+    }
+    span {
+      @media (max-width: 1025px) {
+        display: none;
       }
     }
   }

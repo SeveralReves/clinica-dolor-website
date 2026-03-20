@@ -39,6 +39,7 @@
                   <img :src="row[column.field] ? `/storage/${row[column.field]}` : placeholderImage" alt="" class="card__vessel--image">
                 </div>
               </template>
+              
               <template v-else-if="column.field == 'is_active'">
                 {{ row[column.field] == '1' ? 'Activo' : 'Inactivo' }}
               </template>

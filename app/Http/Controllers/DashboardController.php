@@ -24,4 +24,10 @@ class DashboardController extends Controller
 
         return view('dashboard.specialists');
     }
+    public function appointments(Request $request)
+    {   
+        // $specialists = Specialists::all();
+
+        return view('dashboard.appointments');
+    }
 }
