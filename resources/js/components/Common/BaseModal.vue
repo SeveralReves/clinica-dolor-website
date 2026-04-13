@@ -82,7 +82,7 @@ export default {
 
 .modal-container {
   width: 100%;
-  max-width: 560px;
+  max-width: 600px;
   background: #fff;
   border-radius: 14px;
   overflow: hidden;

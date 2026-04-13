@@ -1,4 +1,4 @@
-<section class="section__specialists">
+<section id="medicos" class="section__specialists">
   <div class="section__specialists--container container">
     <div class="section__specialists--header">
       <h2 class="section__specialists--title">{{ $title }}</h2>

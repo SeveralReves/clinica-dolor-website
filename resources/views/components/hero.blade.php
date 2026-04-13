@@ -3,7 +3,7 @@
     
 @endphp
 
-<div class="hero">
+<div id="home" class="hero">
   <div class="hero__container container">
     <div class="hero__content ">
         @if (isset($title) && !empty($title))
@@ -22,7 +22,7 @@
                 {{ $button['title'] ?? 'Ver más' }}
               </a>
               @if (isset($button_secondary['title']) && !empty($button_secondary['title']))
-                <a href="{{ $button_secondary['url'] }}" title="{{ $button_secondary['title'] ?? 'Ver más' }}" class="hero__button button__ghost" >
+                <a href="{{ $button_secondary['url'] }}" title="{{ $button_secondary['title'] ?? 'Ver más' }}" class="hero__button button__secondary" >
                   {{ $button_secondary['title'] ?? 'Ver más' }}
                 </a>
               @endif

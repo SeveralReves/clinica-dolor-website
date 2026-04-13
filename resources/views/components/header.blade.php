@@ -4,23 +4,23 @@
     $menu = [
       [
         'title' => 'Inicio',
-        'url' => '/#'
+        'url' => '/#home'
       ],
       [
         'title' => 'Acerca de',
-        'url' => '/#'
+        'url' => '/#acerca-de'
       ],
       [
         'title' => 'Servicios',
-        'url' => '/#'
+        'url' => '/#servicios'
       ],
       [
-        'title' => 'Doctores',
-        'url' => '/#'
+        'title' => 'Médicos',
+        'url' => '/#medicos'
       ],
       [
         'title' => 'Preguntas Frecuentes',
-        'url' => '/#'
+        'url' => '/#preguntas-frecuentes'
       ],
     ];
 
@@ -34,7 +34,7 @@
   <div class="container header__container">
     <a href="/" class="header__logo-link">
       <img src="{{ $logo }}" alt="logo header" title="logo header" loading="lazy" class="header__logo" width="50" height="50">
-      <span>Clinica del Dolor Apure</span>
+      <span>Clínica del Dolor Apure</span>
     </a>
     <div class="header__content">
       <nav class="header__nav">

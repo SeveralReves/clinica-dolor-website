@@ -212,7 +212,7 @@ $text-muted: #94a3b8;
   padding: 0.5rem 1rem;
   border-radius: 10px;
   color: $color-accent;
-  
+  width: fit-content;
   &__info {
     display: flex;
     flex-direction: column;

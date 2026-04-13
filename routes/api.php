@@ -34,6 +34,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // Slots ocupados (uso interno admin)
         Route::get('appointments/busy-slots', [AppointmentController::class, 'getBusySlots']);
+
+        // Gestión de citas (admin)
+        Route::put('appointments/{appointment}', [AppointmentController::class, 'update']);
+        Route::delete('appointments/{appointment}', [AppointmentController::class, 'destroy']);
+        Route::post('appointments/{appointment}/reminder', [AppointmentController::class, 'sendReminder']);
     });
 });
 

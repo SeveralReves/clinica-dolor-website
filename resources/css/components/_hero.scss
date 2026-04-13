@@ -16,6 +16,9 @@
     overflow: hidden;
     border-radius: 25px;
     position: relative;
+    @media (max-width: 980px) {
+      display: none;
+    }
   }
   &__container {
     display: flex;
@@ -23,6 +26,9 @@
     gap: 120px;
     align-items: center;
     transform: translateY(40px);
+    // @media (max-width: 980px) {
+    //   flex-direction: column;
+    // }
   }
   &__image {
     width: 100%;
@@ -68,6 +74,9 @@
     margin-top: 20px;
     display: flex;
     gap: 15px;
+    @media (max-width: 980px) {
+      flex-direction: column;
+    }
   }
   &__card {
     position: absolute;

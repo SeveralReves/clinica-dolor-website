@@ -1,4 +1,4 @@
-<section class="section__services">
+<section id="servicios" class="section__services">
   <div class="section__services--container container">
     <div class="section__services--header">
       <h2 class="section__services--title">{{$title}}</h2>

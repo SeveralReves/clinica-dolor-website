@@ -103,29 +103,59 @@ class AppointmentController extends Controller
     public function update(Request $request, Appointment $appointment)
     {
         $validated = $request->validate([
-            'status' => 'required|in:pending,confirmed,cancelled,completed',
+            'status' => 'sometimes|in:pending,confirmed,cancelled,completed',
             'date'   => 'sometimes|date',
             'hour'   => 'sometimes|string',
+            'reason' => 'sometimes|nullable|string',
         ]);
 
-        // Si el estado cambia, registramos el log automáticamente
+        // Log automático cuando cambia el estado
         if ($request->has('status') && $request->status !== $appointment->status) {
             $labels = [
                 'confirmed' => 'Cita Confirmada',
-                'cancelled' => 'Cita Cancelada',
-                'completed' => 'Consulta Finalizada',
-                'pending'   => 'Cita en Espera'
+                'cancelled'  => 'Cita Cancelada',
+                'completed'  => 'Consulta Finalizada',
+                'pending'    => 'Cita en Espera',
             ];
 
             $appointment->logs()->create([
                 'status_label' => $labels[$request->status] ?? 'Estado Actualizado',
-                'description'  => 'El estado de la cita fue cambiado por el personal administrativo.'
+                'description'  => 'El estado de la cita fue cambiado por el personal administrativo.',
+            ]);
+        }
+
+        // Log automático cuando se pospone (cambia fecha u hora)
+        if (($request->has('date') || $request->has('hour')) && !$request->has('status')) {
+            $appointment->logs()->create([
+                'status_label' => 'Cita Reprogramada',
+                'description'  => 'La cita fue reprogramada por el personal administrativo.',
             ]);
         }
 
         $appointment->update($validated);
 
-        return response()->json(['message' => 'Cita actualizada', 'appointment' => $appointment->load('patient')]);
+        return response()->json([
+            'message'     => 'Cita actualizada',
+            'appointment' => $appointment->load(['patient', 'specialist', 'logs']),
+        ]);
+    }
+
+    /**
+     * Registra el envío de un recordatorio y devuelve los datos de contacto del paciente.
+     */
+    public function sendReminder(Appointment $appointment)
+    {
+        $appointment->load(['patient', 'specialist']);
+
+        $appointment->logs()->create([
+            'status_label' => 'Recordatorio Enviado',
+            'description'  => 'Se envió un recordatorio de cita al paciente.',
+        ]);
+
+        return response()->json([
+            'message'     => 'Recordatorio registrado',
+            'appointment' => $appointment,
+        ]);
     }
 
     public function destroy(Appointment $appointment)

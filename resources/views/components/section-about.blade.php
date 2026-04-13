@@ -1,4 +1,4 @@
-<section class="section__about">
+<section id="acerca-de" class="section__about">
     <div class="container section__about--container">
         <div class="section__about--content">
             <span class="section__about--pretitle">{{ $pretitle }}</span>
