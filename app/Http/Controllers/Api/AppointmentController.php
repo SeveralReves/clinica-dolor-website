@@ -1,12 +1,14 @@
-<?php 
+<?php
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Patient;
+use App\Models\Specialist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class AppointmentController extends Controller
 {
@@ -139,12 +141,62 @@ class AppointmentController extends Controller
         ]);
 
         $busySlots = Appointment::where('specialist_id', $request->specialist_id)
-            ->whereDate($request->date)
+            ->whereDate('date', $request->date)
             ->where('status', '!=', 'cancelled')
-            ->pluck('hour') // Extrae solo la columna 'hour'
+            ->pluck('hour')
             ->toArray();
 
         return response()->json($busySlots);
+    }
+
+    /**
+     * Devuelve las horas disponibles para un especialista en una fecha concreta.
+     * Prioridad: disponibilidad custom > horario regular semanal.
+     * Endpoint público (usado por el formulario de reserva del front).
+     */
+    public function getAvailableSlots(Request $request)
+    {
+        $request->validate([
+            'specialist_id' => 'required|exists:specialists,id',
+            'date'          => 'required|date',
+        ]);
+
+        $specialist = Specialist::with(['regularSchedules', 'customAvailabilities'])
+            ->findOrFail($request->specialist_id);
+
+        $date = Carbon::parse($request->date)->format('Y-m-d');
+
+        // 1. Obtener disponibilidad (custom tiene prioridad)
+        $availability = $specialist->getAvailabilityForDate($date);
+
+        if ($availability->isEmpty()) {
+            return response()->json(['available_hours' => []]);
+        }
+
+        // 2. Generar slots horarios (intervalos de 1 hora)
+        $allHours = [];
+        foreach ($availability as $slot) {
+            $start  = Carbon::parse($slot->start_time);
+            $end    = Carbon::parse($slot->end_time);
+            $period = CarbonPeriod::create($start, '1 hour', $end);
+
+            foreach ($period as $time) {
+                if ($time->format('H:i:s') !== $end->format('H:i:s')) {
+                    $allHours[] = $time->format('h:i A');
+                }
+            }
+        }
+
+        // 3. Restar los slots ya ocupados por citas vigentes
+        $busySlots = Appointment::where('specialist_id', $specialist->id)
+            ->whereDate('date', $date)
+            ->where('status', '!=', 'cancelled')
+            ->pluck('hour')
+            ->toArray();
+
+        $availableHours = array_values(array_diff($allHours, $busySlots));
+
+        return response()->json(['available_hours' => $availableHours]);
     }
     public function checkStatus(Request $request)
     {

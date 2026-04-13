@@ -17,31 +17,38 @@ const props = defineProps({
 })
 
 
-const busyHours = ref([]) 
+const availableHours = ref([])
 const loadingHours = ref(false)
-// Función para buscar disponibilidad en el servidor
-async function fetchBusyHours() {
+
+// Formatea un Date a 'YYYY-MM-DD' usando la hora LOCAL (evita el bug UTC de toISOString).
+function toLocalDateStr(date) {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+// Obtiene las horas disponibles del servidor para el especialista + fecha seleccionada.
+// El backend ya aplica prioridad: custom availability > horario regular, y resta citas ocupadas.
+async function fetchAvailableHours() {
   if (!form.value.specialist || !form.value.date) return
-  
+
   loadingHours.value = true
+  availableHours.value = []
   try {
-    const { data } = await axios.get('/api/appointments/busy-slots', {
+    const { data } = await axios.get('/api/appointments/available-slots', {
       params: {
         specialist_id: form.value.specialist.id,
-        date: form.value.date.toISOString().split('T')[0] // Formato YYYY-MM-DD
+        date: toLocalDateStr(form.value.date),
       }
     })
-    busyHours.value = data // Ejemplo: ["09:00 AM", "11:00 AM"]
+    availableHours.value = data.available_hours ?? []
   } catch (e) {
-    console.error("Error cargando disponibilidad", e)
+    console.error('Error cargando disponibilidad', e)
   } finally {
     loadingHours.value = false
   }
 }
-
-
-// Helper para saber si una hora está disponible
-const isHourBusy = (h) => busyHours.value.includes(h)
 
 const vvForm = ref(null) 
 
@@ -116,21 +123,23 @@ const isDisabledForm = computed(() => {
 
 const isDateDisabled = (d) => {
   const x = normalizeDay(d)
-  if (x < todayStart.value) return true 
-  
-  if (!form.value.specialist || !form.value.specialist.hours) {
-    return true
-  }
+  if (x < todayStart.value) return true
 
+  if (!form.value.specialist) return true
+
+  // Usa hora local para evitar el desfase UTC de toISOString()
+  const dateStr = toLocalDateStr(x)
+
+  // Fechas explícitamente bloqueadas (vacaciones, permisos, etc.)
+  if (form.value.specialist.blocked_dates?.includes(dateStr)) return true
+
+  // Fechas con horario especial habilitado → siempre disponibles aunque no estén en el horario regular
+  if (form.value.specialist.custom_enabled_dates?.includes(dateStr)) return false
+
+  // Sin horario regular para ese día de la semana → deshabilitado
   const dayName = dayNames[x.getDay()]
   const specialistHours = form.value.specialist.hours
-
-  // Verificamos si el día existe en el objeto y si tiene al menos una hora
-  if (!specialistHours[dayName] || specialistHours[dayName].length === 0) {
-    return true 
-  }
-
-  if (x.getDay() === 0 || x.getDay() === 6) return true // Fines de semana
+  if (!specialistHours || !specialistHours[dayName] || specialistHours[dayName].length === 0) return true
 }
 
 // const changeSpecialist = (s) => {
@@ -139,24 +148,18 @@ const isDateDisabled = (d) => {
 //   form.value.hour = null
 // }
 
-// Modificamos los setters para que disparen la búsqueda
 const changeSpecialist = (s) => {
   form.value.specialist = s
   form.value.date = null
   form.value.hour = null
-  busyHours.value = []
+  availableHours.value = []
 }
 
 const changeDate = (d) => {
   form.value.date = d
   form.value.hour = null
-  fetchBusyHours() // <--- Llamada a la API
+  fetchAvailableHours()
 }
-
-// const changeDate = (d) => {
-//   form.value.date = d
-//   form.value.hour = null
-// }
 
 const changeBirthday = (d) => {
   form.value.birthday = d
@@ -265,27 +268,22 @@ async function onSubmit(values) {
             <div class="booking__card--hours-label">
               <span>Horarios disponibles:</span>
             </div>
-            <!-- <div class="booking__card--hours-list" v-if="form.date !== null ">
-              <button class="booking__card--hour" v-for="hour in form.specialist?.hours[dayNames[normalizeDay(form.date).getDay()]]" :class="{selected: form.hour === hour}" :key="hour" @click="changeHour(hour)">
-                {{ hour }}
-              </button>
-            </div> -->
             <div class="booking__card--hours-list" v-if="form.date !== null">
-              <template v-for="hour in form.specialist?.hours[dayNames[normalizeDay(form.date).getDay()]]" :key="hour">
-                <button 
-                  v-if="!isHourBusy(hour)" 
-                  class="booking__card--hour" 
-                  :class="{selected: form.hour === hour}" 
+              <div v-if="loadingHours" class="loading-text">Consultando disponibilidad...</div>
+              <template v-else>
+                <button
+                  v-for="hour in availableHours"
+                  :key="hour"
+                  class="booking__card--hour"
+                  :class="{selected: form.hour === hour}"
                   @click="changeHour(hour)"
                 >
                   {{ hour }}
                 </button>
+                <div v-if="availableHours.length === 0" class="no-hours">
+                  No hay horarios disponibles para este día.
+                </div>
               </template>
-              
-              <div v-if="loadingHours" class="loading-text">Consultando disponibilidad...</div>
-              <div v-else-if="form.specialist?.hours[dayNames[normalizeDay(form.date).getDay()]].every(h => isHourBusy(h))" class="no-hours">
-                No hay horarios disponibles para este día.
-              </div>
             </div>
           </div>
         </div>

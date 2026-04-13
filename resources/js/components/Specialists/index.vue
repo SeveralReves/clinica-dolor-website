@@ -151,7 +151,28 @@
     </BaseModal>
 
     <BaseModal v-model="openSchedulesModal" :title="'Horarios: ' + currentSpecialist?.name" @close="closeSchedules">
-      <div class="schedules-container">
+      <!-- Tabs -->
+      <div class="schedule-tabs">
+        <button
+          class="schedule-tab"
+          :class="{ active: scheduleTab === 'regular' }"
+          @click="scheduleTab = 'regular'"
+        >
+          <span class="material-symbols-outlined">calendar_month</span>
+          Horarios Semanales
+        </button>
+        <button
+          class="schedule-tab"
+          :class="{ active: scheduleTab === 'custom' }"
+          @click="scheduleTab = 'custom'; fetchCustomAvailabilities()"
+        >
+          <span class="material-symbols-outlined">event_busy</span>
+          Fechas Especiales
+        </button>
+      </div>
+
+      <!-- TAB 1: Horarios semanales regulares -->
+      <div v-if="scheduleTab === 'regular'" class="schedules-container">
         <div v-for="(item, index) in scheduleForm" :key="index" class="schedule-row">
           <div class="field">
             <select v-model="item.day" class="field__input">
@@ -174,16 +195,86 @@
             <span class="material-symbols-outlined">delete</span>
           </button>
         </div>
-        
+
         <button class="button__secondary button--small" @click="addScheduleRow" style="margin-top: 10px;">
-          <span class="material-symbols-outlined">add</span> 
+          <span class="material-symbols-outlined">add</span>
           <span>Añadir Turno</span>
         </button>
       </div>
 
+      <!-- TAB 2: Fechas especiales (bloqueos / horario custom por fecha) -->
+      <div v-if="scheduleTab === 'custom'" class="schedules-container">
+        <!-- Formulario para agregar -->
+        <div class="custom-form">
+          <h4 style="margin: 0 0 12px; font-size: 0.95rem; font-weight: 600;">Agregar fecha especial</h4>
+          <div class="custom-form__row">
+            <div class="field">
+              <label class="field__label">Fecha</label>
+              <input v-model="customForm.date" type="date" class="field__input" :min="todayStr" />
+            </div>
+            <div class="field">
+              <label class="field__label">Estado</label>
+              <select v-model="customForm.is_available" class="field__input">
+                <option :value="false">Bloqueado (sin atención)</option>
+                <option :value="true">Horario personalizado</option>
+              </select>
+            </div>
+          </div>
+          <div v-if="customForm.is_available" class="custom-form__row">
+            <div class="field">
+              <label class="field__label">Inicio</label>
+              <input v-model="customForm.start_time" type="time" class="field__input" />
+            </div>
+            <div class="field">
+              <label class="field__label">Fin</label>
+              <input v-model="customForm.end_time" type="time" class="field__input" />
+            </div>
+          </div>
+          <button
+            class="button__primary button--small"
+            :disabled="loadingCustom || !customForm.date"
+            @click="saveCustomAvailability"
+            style="margin-top: 8px;"
+          >
+            {{ loadingCustom ? 'Guardando...' : 'Guardar fecha' }}
+          </button>
+        </div>
+
+        <hr style="margin: 16px 0; border: 0; border-top: 1px solid #eee;" />
+
+        <!-- Listado de fechas especiales futuras -->
+        <p style="font-size: 0.85rem; color: #666; margin-bottom: 8px;">Próximas fechas especiales:</p>
+        <div v-if="loadingCustom" style="color:#666; font-size:0.9rem;">Cargando...</div>
+        <div v-else-if="customAvailabilities.length === 0" style="color:#999; font-size:0.9rem;">
+          No hay fechas especiales configuradas.
+        </div>
+        <div v-for="item in customAvailabilities" :key="item.id" class="custom-row">
+          <span class="material-symbols-outlined" :style="{ color: item.is_available ? '#0ca678' : '#fa5252' }">
+            {{ item.is_available ? 'schedule' : 'event_busy' }}
+          </span>
+          <span class="custom-row__date">{{ formatDate(item.date) }}</span>
+          <span class="custom-row__info">
+            <template v-if="item.is_available">
+              {{ item.start_time?.substring(0,5) }} – {{ item.end_time?.substring(0,5) }}
+            </template>
+            <template v-else>
+              <span style="color:#fa5252; font-weight:500;">Bloqueado</span>
+            </template>
+          </span>
+          <button class="button__ghost text-danger" @click="deleteCustomAvailability(item.id)">
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+        </div>
+      </div>
+
       <template #footer>
         <button class="button__secondary" @click="openSchedulesModal = false">Cerrar</button>
-        <button class="button__primary" :disabled="loadingSchedules" @click="saveSchedules">
+        <button
+          v-if="scheduleTab === 'regular'"
+          class="button__primary"
+          :disabled="loadingSchedules"
+          @click="saveSchedules"
+        >
           {{ loadingSchedules ? 'Guardando...' : 'Guardar Horarios' }}
         </button>
       </template>
@@ -216,6 +307,11 @@ export default {
       loadingSchedules: false,
       currentSpecialist: null,
       scheduleForm: [],
+      scheduleTab: 'regular',
+      customAvailabilities: [],
+      customForm: { date: '', is_available: false, start_time: '08:00', end_time: '12:00' },
+      loadingCustom: false,
+      todayStr: new Date().toISOString().split('T')[0],
       photoPreview: null,
       columns: [
         { label: 'Foto', field: 'photo_path', type: 'slot' },
@@ -404,8 +500,84 @@ export default {
 
     resetForm() {
       this.form = this.emptyForm()
-      this.photoPreview = null // Limpiar el preview al cerrar
+      this.photoPreview = null
       this.errors = {}
+    },
+
+    closeSchedules() {
+      this.openSchedulesModal = false
+      this.scheduleTab = 'regular'
+      this.customAvailabilities = []
+      this.customForm = { date: '', is_available: false, start_time: '08:00', end_time: '12:00' }
+    },
+
+    // ── Custom Availabilities ──────────────────────────────────────
+    async fetchCustomAvailabilities() {
+      if (!this.currentSpecialist) return
+      this.loadingCustom = true
+      try {
+        const { data } = await axios.get(`/api/specialists/${this.currentSpecialist.id}/custom-availabilities`)
+        this.customAvailabilities = data
+      } catch (e) {
+        this.showError('No se pudo cargar la disponibilidad especial.')
+      } finally {
+        this.loadingCustom = false
+      }
+    },
+
+    async saveCustomAvailability() {
+      if (!this.customForm.date) return
+      this.loadingCustom = true
+      try {
+        await axios.post(
+          `/api/specialists/${this.currentSpecialist.id}/custom-availabilities`,
+          this.customForm
+        )
+        this.customForm = { date: '', is_available: false, start_time: '08:00', end_time: '12:00' }
+        await this.fetchCustomAvailabilities()
+        Swal.fire({ icon: 'success', title: 'Fecha guardada', timer: 1500, showConfirmButton: false })
+      } catch (e) {
+        const msg = e.response?.data?.message || 'Error al guardar la fecha especial.'
+        this.showError(msg)
+      } finally {
+        this.loadingCustom = false
+      }
+    },
+
+    async deleteCustomAvailability(id) {
+      const result = await Swal.fire({
+        title: '¿Eliminar fecha especial?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        customClass: { container: 'swal-high-z', confirmButton: 'button__primary', cancelButton: 'button__gray' },
+      })
+      if (!result.isConfirmed) return
+
+      try {
+        await axios.delete(`/api/specialists/${this.currentSpecialist.id}/custom-availabilities/${id}`)
+        await this.fetchCustomAvailabilities()
+      } catch (e) {
+        this.showError('No se pudo eliminar.')
+      }
+    },
+
+    formatDate(dateStr) {
+      if (!dateStr) return ''
+      const [y, m, d] = String(dateStr).substring(0, 10).split('-')
+      return `${d}/${m}/${y}`
+    },
+
+    sortData(order) {
+      this.filters.order = order
+      this.sortView = false
+      this.fetchData(1)
+    },
+
+    resetFilters() {
+      this.filters = { q: '', status: '', per_page: 10, order: '' }
+      this.fetchData(1)
     },
   }
 }
@@ -445,7 +617,35 @@ export default {
 .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
 .photo-placeholder span { font-size: 40px; color: #ccc; }
 
-/* Horarios */
+/* Tabs */
+.schedule-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0;
+}
+.schedule-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #666;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.schedule-tab.active {
+  color: var(--color-primary, #0ca678);
+  border-bottom-color: var(--color-primary, #0ca678);
+  font-weight: 600;
+}
+
+/* Horarios semanales */
 .schedule-row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr auto;
@@ -455,5 +655,26 @@ export default {
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
 }
+
+/* Custom availability */
+.custom-form { background: #f8f9fa; padding: 12px; border-radius: 8px; }
+.custom-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.custom-row {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
+}
+.custom-row__date { font-weight: 600; }
+.custom-row__info { color: #555; }
+
 .text-danger { color: #fa5252; }
 </style>

@@ -36,4 +36,38 @@ class Specialist extends Model
     {
         return $this->hasMany(SpecialistSchedule::class);
     }
+    /**
+     * Horarios semanales recurrentes (Lunes, Martes...)
+     */
+    public function regularSchedules()
+    {
+        return $this->hasMany(SpecialistSchedule::class);
+    }
+
+    /**
+     * Horarios o bloqueos para fechas específicas
+     */
+    public function customAvailabilities()
+    {
+        return $this->hasMany(SpecialistCustomAvailability::class);
+    }
+
+    /**
+     * Método de ayuda para obtener la disponibilidad de un día concreto
+     */
+    public function getAvailabilityForDate($date)
+    {
+        // 1. Prioridad: ¿Hay algo específico para esta fecha?
+        $custom = $this->customAvailabilities()->where('date', $date)->get();
+        
+        if ($custom->isNotEmpty()) {
+            // Si el primer registro dice que no está disponible, retornamos vacío
+            if (!$custom->first()->is_available) return collect();
+            return $custom;
+        }
+
+        // 2. Si no hay nada específico, buscamos el horario regular
+        $dayName = strtolower(date('l', strtotime($date))); // 'monday', 'tuesday'...
+        return $this->regularSchedules()->where('day', $dayName)->get();
+    }
 }

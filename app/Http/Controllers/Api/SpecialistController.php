@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Specialist;
+use App\Models\SpecialistCustomAvailability;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -85,5 +86,50 @@ class SpecialistController extends Controller
         if ($specialist->photo_path) Storage::disk('public')->delete($specialist->photo_path);
         $specialist->delete();
         return response()->json(['message' => 'Eliminado correctamente']);
+    }
+
+    // ─── Custom Availabilities ───────────────────────────────────────────────
+
+    /**
+     * Lista las disponibilidades custom de un especialista (solo fechas futuras).
+     */
+    public function getCustomAvailabilities(Specialist $specialist)
+    {
+        $items = $specialist->customAvailabilities()
+            ->where('date', '>=', now()->toDateString())
+            ->orderBy('date')
+            ->get();
+
+        return response()->json($items);
+    }
+
+    /**
+     * Crea o actualiza la disponibilidad custom para una fecha concreta.
+     * Si ya existe un registro para esa fecha, lo reemplaza.
+     */
+    public function storeCustomAvailability(Request $request, Specialist $specialist)
+    {
+        $validated = $request->validate([
+            'date'       => 'required|date',
+            'is_available' => 'required|boolean',
+            'start_time' => 'nullable|required_if:is_available,true|date_format:H:i',
+            'end_time'   => 'nullable|required_if:is_available,true|date_format:H:i|after:start_time',
+        ]);
+
+        $custom = $specialist->customAvailabilities()->updateOrCreate(
+            ['date' => $validated['date']],
+            $validated
+        );
+
+        return response()->json($custom, 201);
+    }
+
+    /**
+     * Elimina una disponibilidad custom.
+     */
+    public function destroyCustomAvailability(Specialist $specialist, SpecialistCustomAvailability $custom)
+    {
+        $custom->delete();
+        return response()->json(['message' => 'Eliminado']);
     }
 }
