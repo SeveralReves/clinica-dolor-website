@@ -44,6 +44,21 @@
                 {{ row[column.field] == '1' ? 'Activo' : 'Inactivo' }}
               </template>
 
+              <template v-else-if="column.field == 'patient_name'">
+                {{ row.patient.name }}
+              </template>
+
+              <template v-else-if="column.field == 'patient_phone'">
+                {{ row.patient.phone }}
+              </template>
+
+              <template v-else-if="column.field == 'specialist_name'">
+                {{ row.specialist.name }}
+              </template>
+              <template v-else-if="column.field == 'status_data'">
+                {{ row.status }}
+              </template>
+
               <template v-else>
                 {{ row[column.field] }}
               </template>

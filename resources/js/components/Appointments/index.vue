@@ -9,10 +9,10 @@
           </p>
         </div>
         <div class="table__header--header-button">
-          <button type="button" class="button__primary" @click="openCreate">
+          <!-- <button type="button" class="button__primary" @click="openCreate">
             <span class="material-symbols-outlined">medical_services</span>
             Nuevo Especialista
-          </button>
+          </button> -->
         </div>
       </div>
       
@@ -59,12 +59,6 @@
       @page-change="goToPage"
       model="appointment"
     >
-      <template #cell-status_data="{ row }">
-        <span :class="['badge', `badge--${row.status}`]">
-          asdasdasda
-        </span>
-      </template>
-      
     </data-table>
 
     <BaseModal
@@ -187,15 +181,18 @@ export default {
       photoPreview: null,
       columns: [
         { label: 'Referencia', field: 'reference_id' },
-        { label: 'Paciente', field: 'patient.name',  type: 'slot'  }, // Acceso anidado
+        { label: 'Paciente', field: 'patient_name',  type: 'slot'  }, // Acceso anidado
         { 
           label: 'Fecha/Hora', 
           field: 'date', 
           formatter: (value) => value ? new Date(value).toLocaleString('es-VE')  : '' 
         },
-        { label: 'Teléfono', field: 'patient.phone',  type: 'slot'  },
-        { label: 'Especialista', field: 'specialist.name',  type: 'slot'  },
-        { label: 'Estado', field: 'status_data', type: 'slot' },
+        { label: 'Teléfono', field: 'patient_phone',  type: 'slot'  },
+        { label: 'Especialista', field: 'specialist_name',  type: 'slot'  },
+        { label: 'Estado', field: 'status', formatter: (value) => {
+          const statusMap = { 'pending': 'Pendiente', 'confirmed': 'Confirmada', 'cancelled': 'Cancelada', 'completed': 'Completada' }
+          return statusMap[value] || value
+        }, type: 'slot' },
         { label: 'Acciones', field: 'actions' },
       ],
     }
@@ -246,6 +243,10 @@ export default {
       this.isEdit = true; this.editingId = item.id; this.errors = {};
       this.form = { ...item, is_active: item.is_active == '1' ? true : false, password: '', photo: null };
       this.openCreateModal = true;
+    },
+    applyFilters() {
+      // al filtrar vuelves a página 1
+      this.fetchData(1)
     },
     async save() {
       this.loadingSave = true;

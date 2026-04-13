@@ -59,16 +59,6 @@
       @page-change="goToPage"
       model="specialist"
     >
-      <template #cell-photo_path="{ row }">
-        <img v-if="row.photo_path" :src="'/storage/' + row.photo_path" class="table-avatar" />
-        <div v-else class="table-avatar-placeholder">{{ row.name.charAt(0) }}</div>
-      </template>
-      
-      <template #cell-is_active="{ row }">
-        <span :class="['badge', row.is_active ? 'badge--success' : 'badge--danger']">
-          {{ row.is_active ? 'Activo' : 'Inactivo' }}
-        </span>
-      </template>
     </data-table>
 
     <BaseModal
@@ -254,6 +244,10 @@ export default {
         password: '',
         photo: null // Para el archivo binario
       }
+    },
+    applyFilters() {
+      // al filtrar vuelves a página 1
+      this.fetchData(1)
     },
     async fetchData(page = 1) {
       this.loadingList = true
