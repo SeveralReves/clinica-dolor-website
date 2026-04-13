@@ -3,7 +3,7 @@
     <div class="table__header">
       <div class="table__header--header">
         <div class="table__header--header-content">
-          <h3 class="table__header--header-title">Especialistas Médicos</h3>
+          <h3 class="table__header--header-title">Médicos Especialistas</h3>
           <p class="table__header--header-description">
             Administra el staff médico de la clínica, sus especialidades, datos de contacto y estados de actividad.
           </p>

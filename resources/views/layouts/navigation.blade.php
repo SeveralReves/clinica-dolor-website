@@ -7,7 +7,7 @@
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="d-flex gap-4 items-center">
                         <x-application-logo-auth class="block h-9 w-auto fill-current text-gray-800" width="40" />
-                        <h4>Clínica del dolor</h4>
+                        <h4>Clínica del Dolor Apure</h4>
                     </a>
                 </div>
 

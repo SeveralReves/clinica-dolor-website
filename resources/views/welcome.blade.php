@@ -4,7 +4,7 @@
 
     @include('components.hero', [
         'title' => 'Recupera tu vida del <span>dolor crónico</span>',
-        'description' => 'Clínica del Dolor Apure esta disenada para atender pacientes con síndromes dolorosos, única en el Estado Apure. Contamos con un equipo de expertos médicos altamente capacitados, instalaciones modernas y un compromiso inquebrantable con el bienestar de nuestros pacientes.',
+        'description' => 'Clínica del Dolor Apure esta disenada para atender pacientes con síndromes dolorosos, única en el Estado Apure. Contamos con un equipo de  médicos expertos altamente capacitados, instalaciones modernas y un compromiso inquebrantable con el bienestar de nuestros pacientes.',
         'button' => [
             'url' => '/agendar',
             'title' => 'Agendar Consulta'
