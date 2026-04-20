@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Specialist;
+use App\Models\GalleryItem;
 
 class WebController extends Controller
 {
@@ -12,9 +13,14 @@ class WebController extends Controller
         return view('consult');
     }
     public function home(Request $request)
-    {   
+    {
         $specialists = Specialist::where('is_active', 1)->get();
-        return view('welcome', compact('specialists'));
+        $galleryItems = GalleryItem::where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+
+        return view('welcome', compact('specialists', 'galleryItems'));
     }
     public function thanks(Request $request, $reference)
     {   

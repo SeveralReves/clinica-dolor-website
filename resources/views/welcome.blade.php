@@ -150,6 +150,14 @@
         ]
     ])
 
+    @if(isset($galleryItems) && $galleryItems->count())
+        @include('components.section-gallery', [
+            'title'       => 'Nuestra Galería',
+            'description' => 'Conoce nuestras instalaciones, equipos y momentos especiales de la clínica.',
+            'items'       => $galleryItems
+        ])
+    @endif
+
     @include('components.banner-simple', [
         'title' => '¿Listo para vivir sin dolor?',
         'description' => 'Agenda tu consulta hoy y da el primer paso hacia una vida más saludable y feliz.',

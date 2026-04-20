@@ -30,7 +30,8 @@ import { createApp } from 'vue'
 
 // Registro perezoso (lazy) por nombre de componente:
 const components = {
-  DashboardHome: () => import('./components/DashboardHome.vue'),
+  DashboardHome:   () => import('./components/DashboardHome.vue'),
+  GalleryManager:  () => import('./components/Gallery/index.vue'),
   ExampleComponent: () => import('./components/ExampleComponent.vue'),
   Booking: () => import('./components/Booking.vue'),
   BookingTable: () => import('./components/BookingTable.vue'),
