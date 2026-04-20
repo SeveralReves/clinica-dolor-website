@@ -36,6 +36,7 @@ import { createApp } from 'vue'
 const components = {
   DashboardHome:   () => import('./components/DashboardHome.vue'),
   GalleryManager:  () => import('./components/Gallery/index.vue'),
+  ServicesTable:   () => import('./components/Services/index.vue'),
   ExampleComponent: () => import('./components/ExampleComponent.vue'),
   Booking: () => import('./components/Booking.vue'),
   BookingTable: () => import('./components/BookingTable.vue'),

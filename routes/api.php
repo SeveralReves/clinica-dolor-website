@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\SpecialistController;
 use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\GalleryController;
+use App\Http\Controllers\Api\ServiceController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -40,6 +41,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('appointments/{appointment}', [AppointmentController::class, 'update']);
         Route::delete('appointments/{appointment}', [AppointmentController::class, 'destroy']);
         Route::post('appointments/{appointment}/reminder', [AppointmentController::class, 'sendReminder']);
+
+        // Servicios/Salas (admin)
+        Route::apiResource('services', ServiceController::class);
 
         // Galería (admin)
         Route::post('gallery', [GalleryController::class, 'store']);

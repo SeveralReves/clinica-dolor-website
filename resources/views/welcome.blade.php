@@ -112,6 +112,14 @@
         ]
     ])
 
+    @if(isset($serviceRooms) && $serviceRooms->count())
+        @include('components.section-service-rooms', [
+            'title'       => 'Nuestros Servicios',
+            'description' => 'Contamos con instalaciones especializadas para tu recuperación y bienestar.',
+            'services'    => $serviceRooms
+        ])
+    @endif
+
     @include('components.section-specialists', [
         'title' => 'Conoce a Nuestros Especialistas',
         'description' => 'Un equipo dedicado de profesionales comprometidos con tu bienestar.',

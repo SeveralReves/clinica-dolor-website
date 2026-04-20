@@ -1,0 +1,137 @@
+@use '../base' as *;
+
+.section__rooms {
+  padding: 80px 0;
+  background-color: $white;
+
+  &--header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  &--title {
+    max-width: 700px;
+    margin: 0 auto;
+    color: $black;
+  }
+
+  &--description {
+    margin: 12px auto 0;
+    max-width: 560px;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 1rem;
+  }
+
+  &--grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 28px;
+
+    @media (max-width: 770px) {
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &--item {
+    background: $white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  &--item-photo {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #e8e8e8;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+
+    .section__rooms--item:hover & img {
+      transform: scale(1.05);
+    }
+  }
+
+  &--item-body {
+    padding: 22px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  &--item-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $black;
+    margin: 0 0 8px;
+  }
+
+  &--item-description {
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.6);
+    line-height: 1.6;
+    margin: 0 0 16px;
+    flex: 1;
+  }
+
+  &--item-schedules {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  &--schedule-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+
+    .material-symbols-outlined {
+      font-size: 14px;
+    }
+  }
+
+  &--capacity {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: $secondary;
+    color: white;
+    border-radius: 10px;
+    padding: 0 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-left: 2px;
+
+    .material-symbols-outlined {
+      font-size: 12px;
+    }
+  }
+}

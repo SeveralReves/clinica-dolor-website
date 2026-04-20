@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Specialist;
 use App\Models\GalleryItem;
+use App\Models\Service;
 
 class WebController extends Controller
 {
@@ -15,12 +16,17 @@ class WebController extends Controller
     public function home(Request $request)
     {
         $specialists = Specialist::where('is_active', 1)->get();
+
         $galleryItems = GalleryItem::where('is_active', true)
-            ->orderBy('sort_order')
-            ->orderBy('id')
+            ->orderBy('sort_order')->orderBy('id')
             ->get();
 
-        return view('welcome', compact('specialists', 'galleryItems'));
+        $serviceRooms = Service::with('schedules')
+            ->where('is_active', true)
+            ->latest()
+            ->get();
+
+        return view('welcome', compact('specialists', 'galleryItems', 'serviceRooms'));
     }
     public function thanks(Request $request, $reference)
     {   

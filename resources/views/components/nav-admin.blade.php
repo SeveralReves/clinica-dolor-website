@@ -30,6 +30,14 @@
       </a>
     @endrole
     @role(['admin', 'superadmin'])
+      <a href="{{ route('services') }}" class="layout__admin--nav-item {{ request()->routeIs('services') ? 'active' : ''}}">
+        <span class="material-symbols-outlined">spa</span>
+        <span>
+          Servicios
+        </span>
+      </a>
+    @endrole
+    @role(['admin', 'superadmin'])
       <a href="{{ route('gallery') }}" class="layout__admin--nav-item {{ request()->routeIs('gallery') ? 'active' : ''}}">
         <span class="material-symbols-outlined">photo_library</span>
         <span>

@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/especialistas', [DashboardController::class, 'specialists'])->name('specialists');
         Route::get('/citas', [DashboardController::class, 'appointments'])->name('appointments');
         Route::get('/galeria', [DashboardController::class, 'gallery'])->name('gallery');
+        Route::get('/servicios', [DashboardController::class, 'services'])->name('services');
     });
 });
 

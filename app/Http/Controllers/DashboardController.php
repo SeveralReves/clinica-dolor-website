@@ -67,4 +67,9 @@ class DashboardController extends Controller
     {
         return view('dashboard.gallery');
     }
+
+    public function services(Request $request)
+    {
+        return view('dashboard.services');
+    }
 }
