@@ -12,30 +12,17 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <link rel="icon" type="image/svg+xml" href="{{ asset('/images/logos/logo.svg') }}">
-        <!-- GLightbox -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
-
         <!-- Scripts -->
         @vite(['resources/css/app.scss', 'resources/js/app.js'])
     </head>
     <body class="antialiased">
 
         @include('components.header')
-        
+
         <div class="main">
             @yield('content')
         </div>
-        
-        @include('components.footer')
 
-        <!-- GLightbox init -->
-        <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                if (typeof GLightbox !== 'undefined') {
-                    GLightbox({ selector: '.glightbox', touchNavigation: true, loop: true });
-                }
-            });
-        </script>
+        @include('components.footer')
     </body>
 </html>

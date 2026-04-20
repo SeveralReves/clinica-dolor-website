@@ -2,6 +2,10 @@ import './bootstrap';
 
 import Alpine from 'alpinejs';
 import Headroom from "headroom.js";
+import Splide from '@splidejs/splide';
+import '@splidejs/splide/css';
+import GLightbox from 'glightbox';
+import 'glightbox/dist/css/glightbox.min.css';
 
 window.Alpine = Alpine;
 
@@ -103,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     const $slider = $('.js-specialist-slider');
     if (!$slider.length || typeof $.fn.slick !== 'function') return;
-  
+
     $slider.slick({
       slidesToShow: 3,
       slidesToScroll: 1,
@@ -116,9 +120,30 @@ document.addEventListener('DOMContentLoaded', () => {
         { breakpoint: 992,  settings: { slidesToShow: 2 } },
         { breakpoint: 576,  settings: { slidesToShow: 1 } },
       ]
-  
     });
-    
   }, 300);
+
+  // Gallery slider (Splide)
+  const galleryEl = document.querySelector('.gallery-splide');
+  if (galleryEl) {
+    new Splide(galleryEl, {
+      type:        'loop',
+      perPage:     3,
+      perMove:     1,
+      gap:         '20px',
+      arrows:      true,
+      pagination:  true,
+      autoplay:    true,
+      interval:    4000,
+      pauseOnHover: true,
+      breakpoints: {
+        980: { perPage: 2 },
+        576: { perPage: 1, gap: '12px' },
+      },
+    }).mount();
+  }
+
+  // GLightbox
+  GLightbox({ selector: '.glightbox', touchNavigation: true, loop: true });
 
 })

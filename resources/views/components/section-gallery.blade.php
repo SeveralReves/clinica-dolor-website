@@ -7,37 +7,48 @@
     </div>
 
     @if(isset($items) && $items->count())
-      <div class="section__gallery--grid" data-aos="fade-up" data-aos-delay="100">
-        @foreach($items as $item)
-          @if($item->type === 'photo')
-            <a
-              href="{{ $item->media_url }}"
-              class="section__gallery--item glightbox"
-              data-gallery="gallery-main"
-              data-title="{{ $item->title }}"
-              data-description="{{ $item->description }}"
-            >
-              <img src="{{ $item->thumb_url }}" alt="{{ $item->title ?? 'Galería' }}" loading="lazy" />
-              <div class="section__gallery--overlay">
-                <span class="material-symbols-outlined">zoom_in</span>
-              </div>
-            </a>
-          @else
-            <a
-              href="{{ $item->video_url }}"
-              class="section__gallery--item glightbox"
-              data-gallery="gallery-main"
-              data-type="video"
-              data-title="{{ $item->title }}"
-              data-description="{{ $item->description }}"
-            >
-              <img src="{{ $item->thumb_url }}" alt="{{ $item->title ?? 'Video' }}" loading="lazy" />
-              <div class="section__gallery--overlay section__gallery--overlay-video">
-                <span class="material-symbols-outlined">play_circle</span>
-              </div>
-            </a>
-          @endif
-        @endforeach
+      <div
+        class="splide gallery-splide"
+        aria-label="{{ $title ?? 'Galería' }}"
+        data-aos="fade-up"
+        data-aos-delay="100"
+      >
+        <div class="splide__track">
+          <ul class="splide__list">
+            @foreach($items as $item)
+              <li class="splide__slide">
+                @if($item->type === 'photo')
+                  <a
+                    href="{{ $item->media_url }}"
+                    class="section__gallery--item glightbox"
+                    data-gallery="gallery-main"
+                    data-title="{{ $item->title }}"
+                    data-description="{{ $item->description }}"
+                  >
+                    <img src="{{ $item->thumb_url }}" alt="{{ $item->title ?? 'Galería' }}" loading="lazy" />
+                    <div class="section__gallery--overlay">
+                      <span class="material-symbols-outlined">zoom_in</span>
+                    </div>
+                  </a>
+                @else
+                  <a
+                    href="{{ $item->video_url }}"
+                    class="section__gallery--item glightbox"
+                    data-gallery="gallery-main"
+                    data-type="video"
+                    data-title="{{ $item->title }}"
+                    data-description="{{ $item->description }}"
+                  >
+                    <img src="{{ $item->thumb_url }}" alt="{{ $item->title ?? 'Video' }}" loading="lazy" />
+                    <div class="section__gallery--overlay section__gallery--overlay-video">
+                      <span class="material-symbols-outlined">play_circle</span>
+                    </div>
+                  </a>
+                @endif
+              </li>
+            @endforeach
+          </ul>
+        </div>
       </div>
     @endif
 
