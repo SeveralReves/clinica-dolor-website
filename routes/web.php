@@ -23,6 +23,8 @@ Route::get('/legals', function () {
 Route::get('/consultar', [WebController::class, 'consult'])->name('consult');
 Route::get('/agendar/gracias/{reference}', [WebController::class, 'thanks'])->name('thanks');
 Route::get('/agendar', [WebController::class, 'schedule'])->name('schedule');
+Route::get('/reservar-servicio', [WebController::class, 'serviceSchedule'])->name('service-schedule');
+Route::get('/reservar-servicio/gracias/{reference}', [WebController::class, 'serviceBookingThanks'])->name('service-booking-thanks');
 Route::get('/', [WebController::class, 'home'])->name('home');
 
 Route::get('/dashboard',[DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');

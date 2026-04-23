@@ -36,6 +36,52 @@ class WebController extends Controller
 
         return view('schedule-thanks', compact('appointment'));
     }
+    public function serviceSchedule(Request $request)
+    {
+        $today   = now()->toDateString();
+        $horizon = now()->addMonths(3)->toDateString();
+
+        $services = Service::with([
+            'schedules',
+            'customAvailabilities' => fn($q) => $q->whereBetween('date', [$today, $horizon]),
+        ])->where('is_active', true)->latest()->get()->map(function ($s) {
+            $scheduledDays = $s->schedules->pluck('day')->unique()->values()->toArray();
+
+            $blockedDates = $s->customAvailabilities
+                ->where('is_available', false)
+                ->pluck('date')
+                ->map(fn($d) => \Carbon\Carbon::parse($d)->format('Y-m-d'))
+                ->values()->toArray();
+
+            $customEnabledDates = $s->customAvailabilities
+                ->where('is_available', true)
+                ->pluck('date')
+                ->map(fn($d) => \Carbon\Carbon::parse($d)->format('Y-m-d'))
+                ->values()->toArray();
+
+            return [
+                'id'                   => $s->id,
+                'title'                => $s->title,
+                'description'          => $s->description,
+                'photo_url'            => $s->photo_url,
+                'scheduled_days'       => $scheduledDays,
+                'blocked_dates'        => $blockedDates,
+                'custom_enabled_dates' => $customEnabledDates,
+            ];
+        });
+
+        return view('service-schedule', compact('services'));
+    }
+
+    public function serviceBookingThanks(Request $request, $reference)
+    {
+        $booking = \App\Models\ServiceBooking::with(['patient', 'service'])
+            ->where('reference_id', $reference)
+            ->firstOrFail();
+
+        return view('service-booking-thanks', compact('booking'));
+    }
+
     public function schedule(Request $request)
     {
         $today    = now()->toDateString();
