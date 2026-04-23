@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Service;
+use App\Models\ServiceCustomAvailability;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -111,5 +112,46 @@ class ServiceController extends Controller
         $service->delete();
 
         return response()->json(['message' => 'Servicio eliminado correctamente']);
+    }
+
+    // ── Custom Availabilities ─────────────────────────────────────────────
+
+    public function getCustomAvailabilities(Service $service)
+    {
+        $customs = $service->customAvailabilities()
+            ->where('date', '>=', now()->toDateString())
+            ->orderBy('date')
+            ->get();
+
+        return response()->json($customs);
+    }
+
+    public function storeCustomAvailability(Request $request, Service $service)
+    {
+        $validated = $request->validate([
+            'date'              => 'required|date',
+            'start_time'        => 'required_if:is_available,true|nullable|date_format:H:i',
+            'end_time'          => 'required_if:is_available,true|nullable|date_format:H:i',
+            'capacity_override' => 'nullable|integer|min:1',
+            'is_available'      => 'boolean',
+        ]);
+
+        if (!($validated['is_available'] ?? true)) {
+            $validated['start_time'] = '00:00:00';
+            $validated['end_time']   = '00:00:00';
+        }
+
+        $custom = $service->customAvailabilities()->updateOrCreate(
+            ['date' => $validated['date']],
+            $validated
+        );
+
+        return response()->json($custom, 201);
+    }
+
+    public function destroyCustomAvailability(Service $service, ServiceCustomAvailability $custom)
+    {
+        $custom->delete();
+        return response()->json(['message' => 'Fecha especial eliminada']);
     }
 }

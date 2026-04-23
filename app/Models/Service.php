@@ -38,4 +38,27 @@ class Service extends Model
     {
         return $this->hasMany(ServiceSchedule::class)->orderBy('day')->orderBy('start_time');
     }
+
+    public function customAvailabilities()
+    {
+        return $this->hasMany(ServiceCustomAvailability::class)->orderBy('date');
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(ServiceBooking::class);
+    }
+
+    public function getAvailabilityForDate(string $date)
+    {
+        $custom = $this->customAvailabilities()->where('date', $date)->get();
+
+        if ($custom->isNotEmpty()) {
+            if (!$custom->first()->is_available) return collect();
+            return $custom;
+        }
+
+        $dayName = strtolower(date('l', strtotime($date)));
+        return $this->schedules()->where('day', $dayName)->get();
+    }
 }

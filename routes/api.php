@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\SpecialistController;
 use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\Api\ServiceBookingController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -45,6 +46,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Servicios/Salas (admin)
         Route::apiResource('services', ServiceController::class);
 
+        // Custom availabilities de servicios (admin)
+        Route::get('services/{service}/custom-availabilities', [ServiceController::class, 'getCustomAvailabilities']);
+        Route::post('services/{service}/custom-availabilities', [ServiceController::class, 'storeCustomAvailability']);
+        Route::delete('services/{service}/custom-availabilities/{custom}', [ServiceController::class, 'destroyCustomAvailability']);
+
+        // Reservas de servicios (admin: CRUD)
+        Route::get('service-bookings', [ServiceBookingController::class, 'index']);
+        Route::put('service-bookings/{serviceBooking}', [ServiceBookingController::class, 'update']);
+        Route::delete('service-bookings/{serviceBooking}', [ServiceBookingController::class, 'destroy']);
+
         // Galería (admin)
         Route::post('gallery', [GalleryController::class, 'store']);
         Route::post('gallery/{galleryItem}', [GalleryController::class, 'update']); // POST + _method=PUT para multipart
@@ -63,3 +74,7 @@ Route::get('appointments/status', [AppointmentController::class, 'checkStatus'])
 
 // Disponibilidad para el formulario de reserva (público)
 Route::get('appointments/available-slots', [AppointmentController::class, 'getAvailableSlots']);
+
+// Reservas de servicios (público: crear + consultar slots)
+Route::post('service-bookings', [ServiceBookingController::class, 'store']);
+Route::get('service-bookings/available-slots', [ServiceBookingController::class, 'getAvailableSlots']);

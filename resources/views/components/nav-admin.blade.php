@@ -36,6 +36,12 @@
           Servicios
         </span>
       </a>
+      <a href="{{ route('service-bookings') }}" class="layout__admin--nav-item {{ request()->routeIs('service-bookings') ? 'active' : ''}}">
+        <span class="material-symbols-outlined">calendar_clock</span>
+        <span>
+          Reservas de servicios
+        </span>
+      </a>
     @endrole
     @role(['admin', 'superadmin'])
       <a href="{{ route('gallery') }}" class="layout__admin--nav-item {{ request()->routeIs('gallery') ? 'active' : ''}}">

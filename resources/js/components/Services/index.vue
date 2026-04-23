@@ -95,8 +95,11 @@
                   <button class="apt-btn apt-btn--blue" title="Editar" @click="openEdit(row)">
                     <span class="material-symbols-outlined">edit</span>
                   </button>
-                  <button class="apt-btn" title="Gestionar horarios" @click="openSchedules(row)">
+                  <button class="apt-btn" title="Gestionar horarios y fechas especiales" @click="openSchedules(row)">
                     <span class="material-symbols-outlined">schedule</span>
+                  </button>
+                  <button class="apt-btn apt-btn--green" title="Ver reservas" @click="openBookings(row)">
+                    <span class="material-symbols-outlined">event_available</span>
                   </button>
                   <button class="apt-btn apt-btn--red" title="Eliminar" @click="confirmDelete(row)">
                     <span class="material-symbols-outlined">delete</span>
@@ -136,7 +139,6 @@
       :title="isEdit ? 'Editar Servicio' : 'Nuevo Servicio'"
       @close="resetForm"
     >
-      <!-- Photo preview -->
       <div class="photo-preview-container">
         <div class="photo-preview">
           <img v-if="photoPreview" :src="photoPreview" />
@@ -152,20 +154,17 @@
         </div>
       </div>
 
-      <!-- Title -->
       <div class="field">
         <label class="field__label">Nombre del servicio *</label>
         <input v-model="form.title" type="text" class="field__input" placeholder="Ej: Sala de Rehabilitación" />
         <small v-if="errors.title" class="field__error">{{ errors.title }}</small>
       </div>
 
-      <!-- Description -->
       <div class="field">
         <label class="field__label">Descripción</label>
         <textarea v-model="form.description" class="field__input" rows="3" placeholder="Describe el servicio..."></textarea>
       </div>
 
-      <!-- Status -->
       <div class="field">
         <label class="field__label">Estado</label>
         <select v-model="form.is_active" class="field__input">
@@ -182,18 +181,34 @@
       </template>
     </BaseModal>
 
-    <!-- ─── Modal: Horarios ──────────────────────────────────────────── -->
+    <!-- ─── Modal: Horarios + Fechas Especiales ────────────────────────── -->
     <BaseModal
       v-model="openSchedulesModal"
       :title="'Horarios: ' + (currentService?.title ?? '')"
       @close="closeSchedules"
     >
-      <p style="font-size:0.85rem; color:#666; margin:0 0 16px;">
-        Define los días y horarios en que este servicio está disponible. Cada turno tiene su propia capacidad (personas simultáneas).
-      </p>
+      <!-- Tabs -->
+      <div class="schedule-tabs">
+        <button
+          class="schedule-tab"
+          :class="{ active: scheduleTab === 'regular' }"
+          @click="scheduleTab = 'regular'"
+        >
+          <span class="material-symbols-outlined">calendar_month</span>
+          Horarios Semanales
+        </button>
+        <button
+          class="schedule-tab"
+          :class="{ active: scheduleTab === 'custom' }"
+          @click="scheduleTab = 'custom'; fetchCustomAvailabilities()"
+        >
+          <span class="material-symbols-outlined">event_busy</span>
+          Fechas Especiales
+        </button>
+      </div>
 
-      <div class="schedules-container">
-        <!-- Header labels -->
+      <!-- TAB 1: Horarios semanales regulares -->
+      <div v-if="scheduleTab === 'regular'" class="schedules-container">
         <div class="schedule-row schedule-row--header">
           <span>Día</span>
           <span>Inicio</span>
@@ -249,11 +264,189 @@
         </button>
       </div>
 
+      <!-- TAB 2: Fechas especiales -->
+      <div v-if="scheduleTab === 'custom'" class="schedules-container">
+        <!-- Formulario de nueva fecha especial -->
+        <div class="custom-form">
+          <h4 style="margin: 0 0 12px; font-size: 0.95rem; font-weight: 600;">Agregar fecha especial</h4>
+          <div class="custom-form__row">
+            <div class="field">
+              <label class="field__label">Fecha</label>
+              <input v-model="customForm.date" type="date" class="field__input" :min="todayStr" />
+            </div>
+            <div class="field">
+              <label class="field__label">Estado</label>
+              <select v-model="customForm.is_available" class="field__input">
+                <option :value="false">Bloqueado (sin atención)</option>
+                <option :value="true">Horario personalizado</option>
+              </select>
+            </div>
+          </div>
+          <div v-if="customForm.is_available" class="custom-form__row">
+            <div class="field">
+              <label class="field__label">Inicio</label>
+              <input v-model="customForm.start_time" type="time" class="field__input" />
+            </div>
+            <div class="field">
+              <label class="field__label">Fin</label>
+              <input v-model="customForm.end_time" type="time" class="field__input" />
+            </div>
+            <div class="field">
+              <label class="field__label">Capacidad (opcional)</label>
+              <div class="capacity-input-wrap">
+                <span class="material-symbols-outlined capacity-icon">group</span>
+                <input
+                  v-model.number="customForm.capacity_override"
+                  type="number"
+                  min="1"
+                  class="field__input capacity-input"
+                  placeholder="Usa la del horario"
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            class="button__primary button--small"
+            :disabled="loadingCustom || !customForm.date"
+            @click="saveCustomAvailability"
+            style="margin-top: 8px;"
+          >
+            {{ loadingCustom ? 'Guardando...' : 'Guardar fecha' }}
+          </button>
+        </div>
+
+        <hr style="margin: 16px 0; border: 0; border-top: 1px solid #eee;" />
+
+        <!-- Listado de fechas especiales -->
+        <p style="font-size: 0.85rem; color: #666; margin-bottom: 8px;">Próximas fechas especiales:</p>
+        <div v-if="loadingCustom" style="color:#666; font-size:0.9rem;">Cargando...</div>
+        <div v-else-if="customAvailabilities.length === 0" style="color:#999; font-size:0.9rem;">
+          No hay fechas especiales configuradas.
+        </div>
+        <div v-for="item in customAvailabilities" :key="item.id" class="custom-row">
+          <span class="material-symbols-outlined" :style="{ color: item.is_available ? '#0ca678' : '#fa5252' }">
+            {{ item.is_available ? 'schedule' : 'event_busy' }}
+          </span>
+          <span class="custom-row__date">{{ formatDate(item.date) }}</span>
+          <span class="custom-row__info">
+            <template v-if="item.is_available">
+              {{ item.start_time?.substring(0,5) }} – {{ item.end_time?.substring(0,5) }}
+              <span v-if="item.capacity_override" class="capacity-dot" style="margin-left:6px;">
+                ×{{ item.capacity_override }}
+              </span>
+            </template>
+            <template v-else>
+              <span style="color:#fa5252; font-weight:500;">Bloqueado</span>
+            </template>
+          </span>
+          <button class="button__ghost text-danger" @click="deleteCustomAvailability(item.id)">
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+        </div>
+      </div>
+
       <template #footer>
         <button class="button__secondary" @click="openSchedulesModal = false">Cerrar</button>
-        <button class="button__primary" :disabled="loadingSchedules" @click="saveSchedules">
+        <button
+          v-if="scheduleTab === 'regular'"
+          class="button__primary"
+          :disabled="loadingSchedules"
+          @click="saveSchedules"
+        >
           {{ loadingSchedules ? 'Guardando...' : 'Guardar horarios' }}
         </button>
+      </template>
+    </BaseModal>
+
+    <!-- ─── Modal: Reservas del servicio ───────────────────────────────── -->
+    <BaseModal
+      v-model="openBookingsModal"
+      :title="'Reservas: ' + (currentService?.title ?? '')"
+      @close="closeBookings"
+    >
+      <!-- Filters -->
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+        <input
+          v-model.trim="bookingFilters.q"
+          class="field__input"
+          style="max-width:200px; font-size:0.85rem;"
+          placeholder="Buscar referencia o paciente..."
+          @keyup.enter="fetchBookings(1)"
+        />
+        <select v-model="bookingFilters.status" class="field__input" style="max-width:160px; font-size:0.85rem;" @change="fetchBookings(1)">
+          <option value="">Todos los estados</option>
+          <option value="pending">Pendiente</option>
+          <option value="confirmed">Confirmado</option>
+          <option value="completed">Completado</option>
+          <option value="cancelled">Cancelado</option>
+        </select>
+        <input v-model="bookingFilters.date_from" type="date" class="field__input" style="max-width:150px; font-size:0.85rem;" @change="fetchBookings(1)" />
+        <input v-model="bookingFilters.date_to" type="date" class="field__input" style="max-width:150px; font-size:0.85rem;" @change="fetchBookings(1)" />
+      </div>
+
+      <!-- Table -->
+      <div v-if="loadingBookings" style="text-align:center; padding:20px; color:#888;">Cargando reservas...</div>
+      <div v-else-if="bookingList.length === 0" style="text-align:center; padding:20px; color:#aaa;">
+        No hay reservas para este servicio.
+      </div>
+      <div v-else class="booking-list">
+        <div v-for="b in bookingList" :key="b.id" class="booking-item">
+          <div class="booking-item__info">
+            <span class="booking-ref">{{ b.reference_id }}</span>
+            <span class="booking-patient">{{ b.patient?.name }}</span>
+            <span class="booking-contact">{{ b.patient?.email }} · {{ b.patient?.phone }}</span>
+            <span class="booking-datetime">
+              <span class="material-symbols-outlined" style="font-size:14px; vertical-align:middle;">event</span>
+              {{ formatDate(b.date) }} · {{ b.hour }}
+            </span>
+            <span v-if="b.notes" class="booking-notes">{{ b.notes }}</span>
+          </div>
+          <div class="booking-item__actions">
+            <span class="status-badge" :class="statusClass(b.status)">{{ statusLabel(b.status) }}</span>
+            <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap;">
+              <button
+                v-if="b.status === 'pending'"
+                class="apt-btn apt-btn--green"
+                title="Confirmar"
+                @click="updateBookingStatus(b, 'confirmed')"
+              >
+                <span class="material-symbols-outlined">check_circle</span>
+              </button>
+              <button
+                v-if="b.status === 'confirmed'"
+                class="apt-btn"
+                title="Marcar completado"
+                @click="updateBookingStatus(b, 'completed')"
+              >
+                <span class="material-symbols-outlined">task_alt</span>
+              </button>
+              <button
+                v-if="b.status !== 'cancelled' && b.status !== 'completed'"
+                class="apt-btn apt-btn--orange"
+                title="Cancelar"
+                @click="updateBookingStatus(b, 'cancelled')"
+              >
+                <span class="material-symbols-outlined">cancel</span>
+              </button>
+              <button class="apt-btn apt-btn--red" title="Eliminar" @click="deleteBooking(b)">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div v-if="bookingPagination.last_page > 1" class="pagination" style="margin-top:12px;">
+        <button class="pagination__button" :disabled="bookingPagination.current_page <= 1" @click="fetchBookings(bookingPagination.current_page - 1)">Anterior</button>
+        <span style="font-size:0.82rem; color:#666;">
+          Página {{ bookingPagination.current_page }} de {{ bookingPagination.last_page }}
+        </span>
+        <button class="pagination__button" :disabled="bookingPagination.current_page >= bookingPagination.last_page" @click="fetchBookings(bookingPagination.current_page + 1)">Siguiente</button>
+      </div>
+
+      <template #footer>
+        <button class="button__secondary" @click="openBookingsModal = false">Cerrar</button>
       </template>
     </BaseModal>
 
@@ -290,6 +483,20 @@ export default {
       currentService:     null,
       scheduleForm:       [],
       loadingSchedules:   false,
+      scheduleTab:        'regular',
+
+      // Custom availabilities
+      customAvailabilities: [],
+      customForm: { date: '', is_available: false, start_time: '08:00', end_time: '12:00', capacity_override: null },
+      loadingCustom: false,
+      todayStr: new Date().toISOString().split('T')[0],
+
+      // Bookings modal
+      openBookingsModal:  false,
+      bookingList:        [],
+      bookingPagination:  { current_page: 1, last_page: 1, total: 0 },
+      bookingFilters:     { q: '', status: '', date_from: '', date_to: '' },
+      loadingBookings:    false,
     }
   },
   computed: {
@@ -386,7 +593,7 @@ export default {
     async confirmDelete(row) {
       const result = await Swal.fire({
         title: `¿Eliminar "${row.title}"?`,
-        text: 'Se eliminarán también todos sus horarios. Esta acción no se puede deshacer.',
+        text: 'Se eliminarán también todos sus horarios y fechas especiales. Esta acción no se puede deshacer.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Sí, eliminar',
@@ -406,6 +613,7 @@ export default {
     // ── Schedules ─────────────────────────────────────────────────────
     openSchedules(row) {
       this.currentService = row
+      this.scheduleTab    = 'regular'
       this.scheduleForm   = row.schedules?.length
         ? JSON.parse(JSON.stringify(row.schedules)).map(s => ({
             id:         s.id,
@@ -415,12 +623,16 @@ export default {
             capacity:   s.capacity ?? 1,
           }))
         : []
+      this.customAvailabilities = []
+      this.customForm = { date: '', is_available: false, start_time: '08:00', end_time: '12:00', capacity_override: null }
       this.openSchedulesModal = true
     },
     closeSchedules() {
-      this.openSchedulesModal = false
-      this.currentService     = null
-      this.scheduleForm       = []
+      this.openSchedulesModal   = false
+      this.currentService       = null
+      this.scheduleForm         = []
+      this.scheduleTab          = 'regular'
+      this.customAvailabilities = []
     },
     addScheduleRow() {
       this.scheduleForm.push({ day: 'monday', start_time: '08:00', end_time: '12:00', capacity: 1 })
@@ -429,7 +641,6 @@ export default {
       this.scheduleForm.splice(index, 1)
     },
     async saveSchedules() {
-      // Validate capacity
       for (const s of this.scheduleForm) {
         if (!s.capacity || s.capacity < 1) s.capacity = 1
       }
@@ -448,9 +659,127 @@ export default {
       }
     },
 
+    // ── Custom Availabilities ──────────────────────────────────────────
+    async fetchCustomAvailabilities() {
+      if (!this.currentService) return
+      this.loadingCustom = true
+      try {
+        const { data } = await axios.get(`/api/services/${this.currentService.id}/custom-availabilities`)
+        this.customAvailabilities = data
+      } catch {
+        this.showError('No se pudo cargar la disponibilidad especial.')
+      } finally {
+        this.loadingCustom = false
+      }
+    },
+    async saveCustomAvailability() {
+      if (!this.customForm.date) return
+      this.loadingCustom = true
+      try {
+        await axios.post(
+          `/api/services/${this.currentService.id}/custom-availabilities`,
+          this.customForm
+        )
+        this.customForm = { date: '', is_available: false, start_time: '08:00', end_time: '12:00', capacity_override: null }
+        await this.fetchCustomAvailabilities()
+        Swal.fire({ icon: 'success', title: 'Fecha guardada', timer: 1500, showConfirmButton: false, customClass: { container: 'swal-high-z' } })
+      } catch (e) {
+        this.showError(e.response?.data?.message || 'Error al guardar la fecha especial.')
+      } finally {
+        this.loadingCustom = false
+      }
+    },
+    async deleteCustomAvailability(id) {
+      const result = await Swal.fire({
+        title: '¿Eliminar fecha especial?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        customClass: { container: 'swal-high-z', confirmButton: 'button__primary', cancelButton: 'button__gray' },
+      })
+      if (!result.isConfirmed) return
+      try {
+        await axios.delete(`/api/services/${this.currentService.id}/custom-availabilities/${id}`)
+        await this.fetchCustomAvailabilities()
+      } catch {
+        this.showError('No se pudo eliminar.')
+      }
+    },
+
+    // ── Bookings ───────────────────────────────────────────────────────
+    openBookings(row) {
+      this.currentService    = row
+      this.bookingList       = []
+      this.bookingFilters    = { q: '', status: '', date_from: '', date_to: '' }
+      this.bookingPagination = { current_page: 1, last_page: 1, total: 0 }
+      this.openBookingsModal = true
+      this.fetchBookings(1)
+    },
+    closeBookings() {
+      this.openBookingsModal = false
+      this.bookingList       = []
+    },
+    async fetchBookings(page = 1) {
+      if (!this.currentService) return
+      this.loadingBookings = true
+      try {
+        const { data } = await axios.get('/api/service-bookings', {
+          params: { page, service_id: this.currentService.id, per_page: 10, ...this.bookingFilters }
+        })
+        this.bookingList       = data.data || data
+        this.bookingPagination = { current_page: data.current_page, last_page: data.last_page, total: data.total }
+      } catch {
+        this.showError('No se pudieron cargar las reservas.')
+      } finally {
+        this.loadingBookings = false
+      }
+    },
+    async updateBookingStatus(booking, status) {
+      try {
+        await axios.put(`/api/service-bookings/${booking.id}`, { status })
+        await this.fetchBookings(this.bookingPagination.current_page)
+      } catch {
+        this.showError('No se pudo actualizar el estado de la reserva.')
+      }
+    },
+    async deleteBooking(booking) {
+      const result = await Swal.fire({
+        title: `¿Eliminar reserva ${booking.reference_id}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        customClass: { container: 'swal-high-z', confirmButton: 'button__primary', cancelButton: 'button__gray' },
+      })
+      if (!result.isConfirmed) return
+      try {
+        await axios.delete(`/api/service-bookings/${booking.id}`)
+        await this.fetchBookings(this.bookingPagination.current_page)
+      } catch {
+        this.showError('No se pudo eliminar la reserva.')
+      }
+    },
+
     // ── Helpers ───────────────────────────────────────────────────────
     dayShort(day) {
       return { monday:'Lu', tuesday:'Ma', wednesday:'Mi', thursday:'Ju', friday:'Vi', saturday:'Sa', sunday:'Do' }[day] ?? day
+    },
+    formatDate(dateStr) {
+      if (!dateStr) return ''
+      const [y, m, d] = String(dateStr).substring(0, 10).split('-')
+      return `${d}/${m}/${y}`
+    },
+    statusLabel(status) {
+      return { pending:'Pendiente', confirmed:'Confirmado', completed:'Completado', cancelled:'Cancelado' }[status] ?? status
+    },
+    statusClass(status) {
+      return {
+        pending:   'status--pending',
+        confirmed: 'status--confirmed',
+        completed: 'status--completed',
+        cancelled: 'status--cancelled',
+      }[status] ?? ''
     },
     showError(msg) {
       Swal.fire({ icon: 'error', title: 'Error', text: msg, customClass: { container: 'swal-high-z' } })
@@ -509,7 +838,9 @@ export default {
 
 /* ── Status badges ─────────────────────────────────────────────── */
 .status-badge      { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.status--pending   { background: #fff3cd; color: #856404; }
 .status--confirmed { background: #e3f2fd; color: #1565c0; }
+.status--completed { background: #e8f5e9; color: #2e7d32; }
 .status--cancelled { background: #fce4ec; color: #b71c1c; }
 
 /* ── Row action buttons ────────────────────────────────────────── */
@@ -518,8 +849,10 @@ export default {
 .apt-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .apt-btn span { font-size: 18px; color: #555; }
 .apt-btn:not(:disabled):hover { background: #e0e0e0; }
-.apt-btn--blue span { color: #1565c0; }
-.apt-btn--red  span { color: #b71c1c; }
+.apt-btn--blue   span { color: #1565c0; }
+.apt-btn--green  span { color: #2e7d32; }
+.apt-btn--orange span { color: #e65100; }
+.apt-btn--red    span { color: #b71c1c; }
 
 /* ── Photo preview ─────────────────────────────────────────────── */
 .photo-preview-container {
@@ -535,6 +868,33 @@ export default {
 }
 .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
 .photo-placeholder span { font-size: 40px; color: #ccc; }
+
+/* ── Schedule tabs ─────────────────────────────────────────────── */
+.schedule-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #eee;
+}
+.schedule-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #666;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.schedule-tab.active {
+  color: var(--color-primary, #0ca678);
+  border-bottom-color: var(--color-primary, #0ca678);
+  font-weight: 600;
+}
 
 /* ── Schedule rows ─────────────────────────────────────────────── */
 .schedules-container { display: flex; flex-direction: column; gap: 6px; }
@@ -556,18 +916,8 @@ export default {
 .schedule-row--header span:last-child { display: none; }
 
 /* Capacity input */
-.capacity-input-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.capacity-icon {
-  position: absolute;
-  left: 8px;
-  font-size: 16px;
-  color: #888;
-  pointer-events: none;
-}
+.capacity-input-wrap { position: relative; display: flex; align-items: center; }
+.capacity-icon { position: absolute; left: 8px; font-size: 16px; color: #888; pointer-events: none; }
 .capacity-input { padding-left: 30px !important; }
 
 /* Empty state */
@@ -577,10 +927,53 @@ export default {
 }
 .no-schedules-msg span { font-size: 36px; }
 
+/* ── Custom availability ───────────────────────────────────────── */
+.custom-form { background: #f8f9fa; padding: 12px; border-radius: 8px; }
+.custom-form__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.custom-row {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
+}
+.custom-row__date { font-weight: 600; }
+.custom-row__info { color: #555; display: flex; align-items: center; }
+.button__ghost { border: none; background: none; cursor: pointer; padding: 4px; }
+.text-danger { color: #fa5252; }
+
+/* ── Booking list ──────────────────────────────────────────────── */
+.booking-list { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; }
+.booking-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px 14px;
+  border: 1px solid #eee;
+}
+.booking-item__info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.booking-ref      { font-size: 0.78rem; color: #888; font-family: monospace; }
+.booking-patient  { font-weight: 600; font-size: 0.92rem; }
+.booking-contact  { font-size: 0.8rem; color: #666; }
+.booking-datetime { font-size: 0.82rem; color: #444; margin-top: 2px; }
+.booking-notes    { font-size: 0.8rem; color: #888; font-style: italic; }
+.booking-item__actions { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+
 /* ── Table misc ────────────────────────────────────────────────── */
 .text-center { text-align: center; padding: 24px; color: #888; }
 .field__error { color: #f44336; font-size: 0.8rem; }
 @media (max-width: 640px) {
   .schedule-row { grid-template-columns: 1fr 1fr 1fr 80px 36px; }
+  .booking-item { flex-direction: column; }
 }
 </style>

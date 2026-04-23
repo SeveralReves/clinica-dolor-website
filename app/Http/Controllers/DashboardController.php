@@ -72,4 +72,9 @@ class DashboardController extends Controller
     {
         return view('dashboard.services');
     }
+
+    public function serviceBookings(Request $request)
+    {
+        return view('dashboard.service-bookings');
+    }
 }
