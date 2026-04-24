@@ -11,6 +11,7 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+        <link rel="icon" type="image/svg+xml" href="{{ asset('/images/logos/logo.svg') }}">
         <!-- Scripts -->
         @vite(['resources/css/app.scss', 'resources/js/app.js'])
     </head>
