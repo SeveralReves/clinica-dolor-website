@@ -107,25 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  setTimeout(() => {
-    const $slider = $('.js-specialist-slider');
-    if (!$slider.length || typeof $.fn.slick !== 'function') return;
-
-    $slider.slick({
-      slidesToShow: 3,
-      slidesToScroll: 1,
-      infinite: true,
-      arrows: true,
-      dots: true,
-      autoplay: false,
-      responsive: [
-        { breakpoint: 1280, settings: { slidesToShow: 3 } },
-        { breakpoint: 992,  settings: { slidesToShow: 2 } },
-        { breakpoint: 576,  settings: { slidesToShow: 1 } },
-      ]
-    });
-  }, 300);
-
   // Gallery slider (Splide)
   const galleryEl = document.querySelector('.gallery-splide');
   if (galleryEl) {

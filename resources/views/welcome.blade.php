@@ -66,7 +66,7 @@
             </ul></p>
         <p>En resumen, la Clínica del Dolor Apure es fundamental para abordar el complejo fenómeno del dolor crónico, proporcionando un enfoque integral y multidisciplinario que busca mejorar tanto la salud física como la calidad de vida de los pacientes.</p>',
         'image' => [
-            'url' => asset('/images/About-medicine.webp'),
+            'url' => asset('/images/about.jpg'),
             'alt' => 'About our clinic'
         ],
         'button' => [
@@ -114,8 +114,8 @@
 
     @if(isset($serviceRooms) && $serviceRooms->count())
         @include('components.section-service-rooms', [
-            'title'       => 'Nuestros Servicios',
-            'description' => 'Contamos con instalaciones especializadas para tu recuperación y bienestar.',
+            'title'       => 'Agenda con nosotros',
+            'description' => 'Agenda una cita el día que mejor te convenga',
             'services'    => $serviceRooms
         ])
     @endif

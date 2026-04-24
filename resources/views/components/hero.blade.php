@@ -1,5 +1,5 @@
 @php
-  $image = asset('/images/hero.jpg');
+  $image = asset('/images/hero-1.jpg');
     
 @endphp
 

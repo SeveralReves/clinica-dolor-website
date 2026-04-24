@@ -2,8 +2,8 @@
   <div class="section__rooms--container container">
 
     <div class="section__rooms--header" data-aos="fade-up">
-      <h2 class="section__rooms--title">{{ $title ?? 'Nuestros Servicios' }}</h2>
-      <p class="section__rooms--description">{{ $description ?? 'Conoce todos los servicios especializados que tenemos disponibles para ti.' }}</p>
+      <h2 class="section__rooms--title">{{ $title ?? 'Agenda con nosotros' }}</h2>
+      <p class="section__rooms--description">{{ $description ?? 'Agenda una cita el día que mejor te convenga' }}</p>
     </div>
 
     @if(isset($services) && $services->count())
@@ -29,11 +29,11 @@
                       <span class="material-symbols-outlined">schedule</span>
                       {{ $dayLabels[$schedule->day] ?? $schedule->day }}
                       {{ \Carbon\Carbon::parse($schedule->start_time)->format('g:i A') }}–{{ \Carbon\Carbon::parse($schedule->end_time)->format('g:i A') }}
-                      @if($schedule->capacity > 1)
+                      {{-- @if($schedule->capacity > 1)
                         <span class="section__rooms--capacity">
                           <span class="material-symbols-outlined">group</span>{{ $schedule->capacity }}
                         </span>
-                      @endif
+                      @endif --}}
                     </span>
                   @endforeach
                 </div>
@@ -44,5 +44,9 @@
       </div>
     @endif
 
+    {{-- boton --}}
+    <div class="section__rooms--footer" data-aos="fade-up" data-aos-delay="200">
+      <a href="{{ $button_url ?? '/reservar-servicio' }}" class="button__secondary" style="margin: 40px auto 0">{{ $button_text ?? 'Agendar cita' }}</a>
+    </div>
   </div>
 </section>

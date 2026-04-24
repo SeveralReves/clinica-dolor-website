@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { Field, Form, ErrorMessage } from 'vee-validate'
 import * as Yup from 'yup'
 import DatePicker from 'vue-datepicker-next'
@@ -71,14 +71,32 @@ const todayStart = computed(() => {
 
 const specialist_id = ref(null);
 
-onMounted(() => {
+onMounted(async () => {
   const params = new URLSearchParams(window.location.search)
   const specialistQuery = params.get('specialist')
-  if (!specialistQuery) return
+  if (specialistQuery) {
+    const id = Number(specialistQuery)
+    const spec = props.specialists.find(s => Number(s.id) === id)
+    if (spec) changeSpecialist(spec)
+  }
 
-  const id = Number(specialistQuery)
-  const spec = props.specialists.find(s => Number(s.id) === id)
-  if (spec) changeSpecialist(spec)
+  await nextTick()
+  const $slider = window.$?.('.js-specialist-slider')
+  if ($slider?.length && typeof window.$?.fn?.slick === 'function') {
+    $slider.slick({
+      slidesToShow: 3,
+      slidesToScroll: 1,
+      infinite: true,
+      arrows: true,
+      dots: true,
+      autoplay: false,
+      responsive: [
+        { breakpoint: 1280, settings: { slidesToShow: 3 } },
+        { breakpoint: 992,  settings: { slidesToShow: 2 } },
+        { breakpoint: 576,  settings: { slidesToShow: 1 } },
+      ]
+    })
+  }
 })
 
 
