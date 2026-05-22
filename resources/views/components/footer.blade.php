@@ -3,7 +3,7 @@
     <div class="footer__top">
       <div class="footer__top--column">
         <div class="footer__logo">
-          <img src="{{ asset('/images/logos/logo-trazo-blanco.svg') }}" alt="Logo">
+          <img src="{{ asset('/images/logos/logo-trazo-blanco.svg') }}" height="250" alt="Logo">
         </div>
         <p class="footer__top--description">
           Dedicado a brindar soluciones compasivas y efectivas para el manejo del dolor para una mejor calidad de vida.
