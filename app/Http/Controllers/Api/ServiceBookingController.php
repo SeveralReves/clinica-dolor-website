@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ServiceBookingBooked;
+use App\Mail\ServiceBookingConfirmed;
 use App\Models\Patient;
 use App\Models\Service;
 use App\Models\ServiceBooking;
@@ -10,6 +12,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ServiceBookingController extends Controller
 {
@@ -101,9 +104,20 @@ class ServiceBookingController extends Controller
                 'notes'      => $validated['notes'] ?? null,
             ]);
 
+            $booking->load(['patient', 'service']);
+
+            // Notificar al administrador
+            $adminEmail = config('mail.admin_notification_email');
+            if ($adminEmail) {
+                Mail::to($adminEmail)->queue(new ServiceBookingBooked($booking));
+            }
+
+            // Confirmar al paciente
+            Mail::to($booking->patient->email)->queue(new ServiceBookingConfirmed($booking));
+
             return response()->json([
                 'message' => 'Reserva registrada con éxito',
-                'booking' => $booking->load(['patient', 'service']),
+                'booking' => $booking,
             ], 201);
         });
     }

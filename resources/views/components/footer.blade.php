@@ -109,7 +109,7 @@
 
     <div class="footer__bottom">
       <p>© {{ date('Y') }} {{ env('APP_NAME') }}. Todos los derechos reservados.</p>
-      <p>Developed by <a href="https://severalreves.lat" target="_blank">Severalreves</a></p>
+      <p>Developed by <a href="https://svrdatatech.lat" target="_blank">SVR DataTech</a></p>
     </div>
   </div>
 </footer>

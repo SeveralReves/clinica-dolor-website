@@ -2,11 +2,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AppointmentBooked;
+use App\Mail\AppointmentConfirmed;
 use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\Specialist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
@@ -48,8 +51,7 @@ class AppointmentController extends Controller
 
         // 3. PROCESO DE GUARDADO (Transacción)
         return DB::transaction(function () use ($validated, $date, $hour) {
-            
-            // Buscar o Crear Paciente
+
             $patient = Patient::updateOrCreate(
                 ['email' => $validated['email']],
                 [
@@ -59,7 +61,6 @@ class AppointmentController extends Controller
                 ]
             );
 
-            // Crear la Cita
             $appointment = Appointment::create([
                 'patient_id'    => $patient->id,
                 'specialist_id' => $validated['specialist_id'],
@@ -69,9 +70,26 @@ class AppointmentController extends Controller
                 'status'        => 'pending'
             ]);
 
+            $appointment->load(['patient', 'specialist']);
+
+            // Notificar al administrador
+            $adminEmail = config('mail.admin_notification_email');
+            if ($adminEmail) {
+                Mail::to($adminEmail)->queue(new AppointmentBooked($appointment));
+            }
+
+            // Notificar al especialista si tiene correo
+            $specialistEmail = $appointment->specialist->email ?? null;
+            if ($specialistEmail) {
+                Mail::to($specialistEmail)->queue(new AppointmentBooked($appointment));
+            }
+
+            // Confirmar al paciente
+            Mail::to($appointment->patient->email)->queue(new AppointmentConfirmed($appointment));
+
             return response()->json([
                 'message'     => 'Cita registrada con éxito',
-                'appointment' => $appointment->load(['patient', 'specialist'])
+                'appointment' => $appointment,
             ], 201);
         });
     }
