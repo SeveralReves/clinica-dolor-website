@@ -302,7 +302,9 @@ async function onSubmit(values) {
         <div class="booking__card--info">
           <h4 class="booking__card--info-title">
             <span class="booking__card--icon">i</span>
-            Información importante
+            <span style="flex: 1">
+              Información importante
+            </span>
           </h4>
           <div class="booking__card--info-content">
             <p>Llega 10 minutos antes de tu reserva. Si necesitas cancelar o reprogramar, avísanos con al menos 24 horas de anticipación.</p>

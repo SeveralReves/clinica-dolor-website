@@ -20,21 +20,34 @@
               @endif
 
               @if($service->schedules->count())
+                @php
+                  $dayOrder = ['monday'=>0,'tuesday'=>1,'wednesday'=>2,'thursday'=>3,'friday'=>4,'saturday'=>5,'sunday'=>6];
+                  $dayShort = ['monday'=>'Lun','tuesday'=>'Mar','wednesday'=>'Mié','thursday'=>'Jue','friday'=>'Vie','saturday'=>'Sáb','sunday'=>'Dom'];
+                  $groups = $service->schedules
+                    ->groupBy(fn($s) => $s->start_time . '-' . $s->end_time)
+                    ->sortKeys();
+                @endphp
                 <div class="section__rooms--item-schedules">
-                  @php
-                    $dayLabels = ['monday'=>'Lun','tuesday'=>'Mar','wednesday'=>'Mié','thursday'=>'Jue','friday'=>'Vie','saturday'=>'Sáb','sunday'=>'Dom'];
-                  @endphp
-                  @foreach($service->schedules as $schedule)
-                    <span class="section__rooms--schedule-badge">
-                      <span class="material-symbols-outlined">schedule</span>
-                      {{ $dayLabels[$schedule->day] ?? $schedule->day }}
-                      {{ \Carbon\Carbon::parse($schedule->start_time)->format('g:i A') }}–{{ \Carbon\Carbon::parse($schedule->end_time)->format('g:i A') }}
-                      {{-- @if($schedule->capacity > 1)
-                        <span class="section__rooms--capacity">
-                          <span class="material-symbols-outlined">group</span>{{ $schedule->capacity }}
-                        </span>
-                      @endif --}}
-                    </span>
+                  <p class="section__rooms--schedule-label">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    Horario
+                  </p>
+                  @foreach($groups as $group)
+                    @php
+                      $sorted = $group->sortBy(fn($s) => $dayOrder[$s->day] ?? 99)->values();
+                      $firstDay = $dayShort[$sorted->first()->day] ?? '';
+                      $lastDay  = $dayShort[$sorted->last()->day] ?? '';
+                      $dayRange = $firstDay === $lastDay ? $firstDay : "$firstDay – $lastDay";
+                      $start = \Carbon\Carbon::parse($group->first()->start_time)->format('g:i A');
+                      $end   = \Carbon\Carbon::parse($group->first()->end_time)->format('g:i A');
+                    @endphp
+                    <div class="section__rooms--schedule-row">
+                      <span class="section__rooms--schedule-days">{{ $dayRange }}</span>
+                      <span class="section__rooms--schedule-time">
+                        <span class="material-symbols-outlined">schedule</span>
+                        {{ $start }} – {{ $end }}
+                      </span>
+                    </div>
                   @endforeach
                 </div>
               @endif
@@ -44,7 +57,6 @@
       </div>
     @endif
 
-    {{-- boton --}}
     <div class="section__rooms--footer" data-aos="fade-up" data-aos-delay="200">
       <a href="{{ $button_url ?? '/reservar-servicio' }}" class="button__secondary" style="margin: 40px auto 0">{{ $button_text ?? 'Agendar cita' }}</a>
     </div>
