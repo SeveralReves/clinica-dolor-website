@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use App\Models\Specialist;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class SpecialistSeeder extends Seeder
 {
@@ -28,53 +27,64 @@ class SpecialistSeeder extends Seeder
 
         $specialists = [
             [
-                'name' => 'Dra. CARMEN CARRILLO',
-                'role' => 'Medicina del Dolor - Anestesiólogo',
-                'description' => 'Con más de una década de experiencia, la Dra. Carrillo es la especialista experta en Medicina del Dolor.',
-                'photo' => 'doctors/doctor-1.webp'
+                'name' => 'Sharon Alondra Guerra Sierralta',
+                'role' => 'Médico Cirujano - Médico Estético',
+                'description' => 'Especialista en medicina estética y cirugía, brindando atención integral a sus pacientes.',
+                'photo' => 'doctors/doctor-1.webp',
+                'phone' => '0414-3137942',
+                'email' => 's.alonestetica@gmail.com',
             ],
             [
-                'name' => 'Dr. MARIA GUILLEN',
-                'role' => 'Anestesiólogo',
-                'description' => 'Como médico en jefe de Clínica del Dolor Apure, la Dra. Guillen se especializa en Anestesiología.',
-                'photo' => 'doctors/doctor-2.webp'
+                'name' => 'Víctor Fonseca',
+                'role' => 'Reumatólogo',
+                'description' => 'Especialista en enfermedades reumáticas y del sistema musculoesquelético.',
+                'photo' => 'doctors/doctor-2.webp',
+                'phone' => '0414-4440079',
+                'email' => 'victor.fonseca@clinicadeldolor.com',
             ],
             [
-                'name' => 'Dra. Natalia Ramos',
-                'role' => 'Medicina fisica y Rehabilitacion',
-                'description' => 'La Dra. Ramos cuenta con más de 15 años de experiencia en las áreas de fertilidad y obstetricia.',
-                'photo' => 'doctors/doctor-3.webp'
+                'name' => 'Darwin Antonio Abreu Martínez',
+                'role' => 'Médico General Integral',
+                'description' => 'Médico general con enfoque integral en la atención y bienestar del paciente.',
+                'photo' => 'doctors/doctor-3.webp',
+                'phone' => '0424-3233577',
+                'email' => 'darwin.abreu@clinicadeldolor.com',
             ],
             [
-                'name' => 'Dr. Juan Pérez',
-                'role' => 'Especialista en Manejo del Dolor',
-                'description' => 'Con más de 15 años de experiencia en el tratamiento del dolor crónico, el Dr. Pérez lidera nuestro equipo con un enfoque centrado en el paciente.',
-                'photo' => 'doctors/doctor1.jpg'
+                'name' => 'Leolgavis Rattia',
+                'role' => 'Psicólogo Clínico',
+                'description' => 'Especialista en psicología clínica, acompañando a los pacientes en su salud mental y emocional.',
+                'photo' => 'doctors/doctor-4.webp',
+                'phone' => '0414-0393174',
+                'email' => 'leolgavis.rattia@clinicadeldolor.com',
             ],
             [
-                'name' => 'Dra. María Gómez',
-                'role' => 'Fisioterapeuta',
-                'description' => 'Especialista en rehabilitación y fisioterapia para el manejo del dolor.',
-                'photo' => 'doctors/doctor2.png'
+                'name' => 'Yisman Parra',
+                'role' => 'Cirujano General',
+                'description' => 'Cirujano general con amplia experiencia en procedimientos quirúrgicos de alta complejidad.',
+                'photo' => 'doctors/doctor-5.webp',
+                'phone' => '0414-1471357',
+                'email' => 'yisman.parra@clinicadeldolor.com',
             ],
             [
-                'name' => 'Dr. Carlos Rodríguez',
-                'role' => 'Anestesiólogo',
-                'description' => 'Experto en técnicas de anestesia y procedimientos intervencionistas para el alivio del dolor.',
-                'photo' => 'doctors/doctor3.png'
-            ]
-            // ... resto de los doctores
+                'name' => 'Carmen Carrillo',
+                'role' => 'Médico Anestesiólogo - Medicina del Dolor',
+                'description' => 'Con más de una década de experiencia, la Dra. Carrillo es especialista en Medicina del Dolor y Anestesiología.',
+                'photo' => 'doctors/doctor-6.webp',
+                'phone' => '0414-9221029',
+                'email' => 'carmen.carrillo@clinicadeldolor.com',
+            ],
         ];
 
         foreach ($specialists as $data) {
            $specialist = Specialist::updateOrCreate(
-                ['email' => Str::slug($data['name']) . '@clinicadeldolor.com'],
+                ['email' => $data['email']],
                 [
                     'name' => $data['name'],
                     'specialty' => $data['role'],
                     'description' => $data['description'],
                     'photo_path' => $data['photo'],
-                    'phone' => '+58 412-' . mt_rand(1000000, 9999999),
+                    'phone' => $data['phone'],
                     'is_active' => true,
                 ]
             );
